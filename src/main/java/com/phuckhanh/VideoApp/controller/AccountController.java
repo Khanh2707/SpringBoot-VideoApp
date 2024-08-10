@@ -20,6 +20,13 @@ import java.util.List;
 public class AccountController {
     AccountService accountService;
 
+    @GetMapping("/myAccount")
+    ApiResponse<AccountResponse> getMyAccount() {
+        return ApiResponse.<AccountResponse>builder()
+                .result(accountService.getMyAccount())
+                .build();
+    }
+
     @GetMapping("/by_channel/{nameChannel}")
     ApiResponse<List<AccountResponse>> getListAccountByNameChannel(@PathVariable String nameChannel) {
         return ApiResponse.<List<AccountResponse>>builder()
@@ -31,6 +38,14 @@ public class AccountController {
     ApiResponse<AccountResponse> createAccount(@RequestBody AccountCreationRequest request) {
         return ApiResponse.<AccountResponse>builder()
                 .result(accountService.createAccount(request))
+                .build();
+    }
+
+    @DeleteMapping("/{username}")
+    ApiResponse<String> deleteAccountByUsername(@PathVariable String username) {
+        accountService.deleteAccountByUsername(username);
+        return ApiResponse.<String>builder()
+                .result("Account has been deleted")
                 .build();
     }
 }

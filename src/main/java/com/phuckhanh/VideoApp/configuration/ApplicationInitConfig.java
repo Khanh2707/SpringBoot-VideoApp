@@ -2,8 +2,10 @@ package com.phuckhanh.VideoApp.configuration;
 
 import com.phuckhanh.VideoApp.constant.PredefinedRole;
 import com.phuckhanh.VideoApp.entity.Account;
+import com.phuckhanh.VideoApp.entity.Channel;
 import com.phuckhanh.VideoApp.entity.Role;
 import com.phuckhanh.VideoApp.repository.AccountRepository;
+import com.phuckhanh.VideoApp.repository.ChannelRepository;
 import com.phuckhanh.VideoApp.repository.RoleRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -37,11 +39,11 @@ public class ApplicationInitConfig {
             prefix = "spring",
             value = "datasource.driverClassName",
             havingValue = "com.mysql.cj.jdbc.Driver")
-    ApplicationRunner applicationRunner(AccountRepository accountRepository, RoleRepository roleRepository) {
+    ApplicationRunner applicationRunner(AccountRepository accountRepository, RoleRepository roleRepository, ChannelRepository channelRepository) {
         log.info("Initializing application.....");
         return args -> {
             if (accountRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
-                Role adminRole = roleRepository.save(Role.builder()
+                roleRepository.save(Role.builder()
                         .idRole(1)
                         .name(PredefinedRole.ADMIN_ROLE)
                         .description("có tất cả quyền")
@@ -60,16 +62,23 @@ public class ApplicationInitConfig {
                         .build());
 
                 HashSet<Role> roles = new HashSet<>();
-                roles.add(adminRole);
+                roleRepository.findByName(PredefinedRole.USER_ROLE).ifPresent(roles::add);
 
                 Account account = Account.builder()
                         .username(ADMIN_USER_NAME)
                         .password(passwordEncoder.encode(ADMIN_PASSWORD))
                         .dateTimeCreate(LocalDateTime.now())
-//                        .roles(roles)
+                        .roles(roles)
                         .build();
 
+                Channel channel = new Channel();
+
+                channel.setName("admin");
+                channel.setNameUnique("admin");
+                channel.setAccount(account);
+
                 accountRepository.save(account);
+                channelRepository.save(channel);
                 log.warn("admin user has been created with default password: admin, please change it");
             }
             log.info("Application initialization completed .....");

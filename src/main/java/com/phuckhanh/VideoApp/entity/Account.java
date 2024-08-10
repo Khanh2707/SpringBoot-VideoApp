@@ -22,10 +22,10 @@ public class Account {
     String password;
     LocalDateTime dateTimeCreate;
 
-    @OneToOne(mappedBy = "account")
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     Channel channel;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "account_role",
             joinColumns = @JoinColumn(name = "id_account_account_role"),
