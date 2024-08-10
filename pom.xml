@@ -89,12 +89,6 @@
 			<artifactId>spring-boot-starter-websocket</artifactId>
 			<version>2.0.4.RELEASE</version>
 		</dependency>
-		<!--  https://mvnrepository.com/artifact/com.cloudinary/cloudinary-http44  -->
-		<dependency>
-			<groupId>com.cloudinary</groupId>
-			<artifactId>cloudinary-http44</artifactId>
-			<version>1.26.0</version>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
@@ -104,10 +98,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 			<version>3.1.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
 		<!--  https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign  -->
 		<dependency>
