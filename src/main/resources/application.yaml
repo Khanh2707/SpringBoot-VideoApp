@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: VideoApp
+    name: videoapp
   datasource:
     url: jdbc:mysql://localhost:3307/videoapp
     driverClassName: com.mysql.cj.jdbc.Driver
@@ -26,4 +26,4 @@ outbound:
   chatapp:
     client-id: ${CLIENT_ID}
     client-secret: ${CLIENT_SECRET}
-    redirect-uri: "http://localhost:5173/authenticate"
+    redirect-uri: "http://localhost:5173/auth/google"

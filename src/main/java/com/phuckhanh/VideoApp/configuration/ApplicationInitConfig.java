@@ -62,7 +62,7 @@ public class ApplicationInitConfig {
                         .build());
 
                 HashSet<Role> roles = new HashSet<>();
-                roleRepository.findByName(PredefinedRole.USER_ROLE).ifPresent(roles::add);
+                roleRepository.findByName(PredefinedRole.ADMIN_ROLE).ifPresent(roles::add);
 
                 Account account = Account.builder()
                         .username(ADMIN_USER_NAME)
