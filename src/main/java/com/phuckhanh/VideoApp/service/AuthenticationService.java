@@ -241,7 +241,7 @@ public class AuthenticationService {
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(account.getUsername())
-                .issuer("https://chatappapi.tpkhanh.com/")
+                .issuer("https://VideoApp.phuckhanh.com/")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()
