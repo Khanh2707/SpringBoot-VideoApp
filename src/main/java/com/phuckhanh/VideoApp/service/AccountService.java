@@ -2,6 +2,7 @@ package com.phuckhanh.VideoApp.service;
 
 import com.phuckhanh.VideoApp.constant.PredefinedRole;
 import com.phuckhanh.VideoApp.dto.request.AccountCreationRequest;
+import com.phuckhanh.VideoApp.dto.request.AccountUpdatePasswordRequest;
 import com.phuckhanh.VideoApp.dto.response.AccountResponse;
 import com.phuckhanh.VideoApp.entity.Account;
 import com.phuckhanh.VideoApp.entity.Channel;
@@ -40,6 +41,8 @@ public class AccountService {
 
     RoleRepository roleRepository;
 
+    VerifyEmailService verifyEmailService;
+
     public AccountResponse getMyAccount() {
         var context = SecurityContextHolder.getContext();
         String usernameAccount = context.getAuthentication().getName();
@@ -62,25 +65,45 @@ public class AccountService {
         if (channelRepository.existsByNameUnique(request.getNameUnique()))
             throw new AppException(ErrorCode.CHANNEL_EXISTED);
 
-        Account account = accountMapper.toAccount(request);
+        if (verifyEmailService.getVerifyEmailNewest(request.getUsername()).getCode().equals(request.getCodeEmail())) {
 
-        account.setPassword(passwordEncoder.encode(request.getPassword()));
-        account.setDateTimeCreate(LocalDateTime.now());
+            Account account = accountMapper.toAccount(request);
 
-        HashSet<Role> roles = new HashSet<>();
-        roleRepository.findByName(PredefinedRole.USER_ROLE).ifPresent(roles::add);
-        account.setRoles(roles);
+            account.setPassword(passwordEncoder.encode(request.getPassword()));
+            account.setDateTimeCreate(LocalDateTime.now());
 
-        Channel channel = new Channel();
+            HashSet<Role> roles = new HashSet<>();
+            roleRepository.findByName(PredefinedRole.USER_ROLE).ifPresent(roles::add);
+            account.setRoles(roles);
 
-        channel.setName(request.getName());
-        channel.setNameUnique(request.getNameUnique());
-        channel.setAccount(account);
+            Channel channel = new Channel();
 
-        accountRepository.save(account);
-        channelRepository.save(channel);
+            channel.setName(request.getName());
+            channel.setNameUnique(request.getNameUnique());
+            channel.setAccount(account);
 
-        return accountMapper.toAccountResponse(account);
+            accountRepository.save(account);
+            channelRepository.save(channel);
+
+            return accountMapper.toAccountResponse(account);
+        } else {
+            throw new AppException(ErrorCode.INVALID_VERIFY_EMAIL);
+        }
+    }
+
+    public AccountResponse updateAccountPassword(String username, AccountUpdatePasswordRequest request) {
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        if (passwordEncoder.matches(request.getCurrentPassword(), account.getPassword()) || verifyEmailService.getVerifyEmailNewest(username).getCode().equals(request.getCurrentPassword())) {
+            accountMapper.updateAccountPassword(account, request);
+
+            account.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+            return accountMapper.toAccountResponse(accountRepository.save(account));
+        } else {
+            throw new AppException(ErrorCode.INVALID_PASSWORD);
+        }
     }
 
     public void deleteAccountByUsername(String username) {

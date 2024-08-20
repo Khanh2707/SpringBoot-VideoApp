@@ -1,6 +1,7 @@
 package com.phuckhanh.VideoApp.controller;
 
 import com.phuckhanh.VideoApp.dto.request.AccountCreationRequest;
+import com.phuckhanh.VideoApp.dto.request.AccountUpdatePasswordRequest;
 import com.phuckhanh.VideoApp.dto.response.AccountResponse;
 import com.phuckhanh.VideoApp.dto.response.ApiResponse;
 import com.phuckhanh.VideoApp.service.AccountService;
@@ -38,6 +39,13 @@ public class AccountController {
     ApiResponse<AccountResponse> createAccount(@RequestBody AccountCreationRequest request) {
         return ApiResponse.<AccountResponse>builder()
                 .result(accountService.createAccount(request))
+                .build();
+    }
+
+    @PutMapping("/password/{username}")
+    ApiResponse<AccountResponse> updateAccountPassword(@PathVariable String username, @RequestBody AccountUpdatePasswordRequest request) {
+        return ApiResponse.<AccountResponse>builder()
+                .result(accountService.updateAccountPassword(username, request))
                 .build();
     }
 

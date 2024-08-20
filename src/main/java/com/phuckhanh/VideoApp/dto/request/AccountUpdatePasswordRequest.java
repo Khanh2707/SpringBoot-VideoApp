@@ -8,10 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AccountCreationRequest {
-    String username;
-    String password;
-    String name;
-    String nameUnique;
-    String codeEmail;
+public class AccountUpdatePasswordRequest {
+    String currentPassword;
+    String newPassword;
 }
