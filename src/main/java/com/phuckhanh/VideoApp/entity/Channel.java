@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -23,4 +25,7 @@ public class Channel {
     @OneToOne
     @JoinColumn(name = "id_account_channel", referencedColumnName = "idAccount")
     Account account;
+
+    @OneToMany(mappedBy = "channel")
+    List<Video> videos;
 }

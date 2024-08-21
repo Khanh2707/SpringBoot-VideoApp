@@ -14,6 +14,10 @@ public enum ErrorCode {
     CHANNEL_EXISTED(1005, "Channel already exists", HttpStatus.BAD_REQUEST),
     INVALID_VERIFY_EMAIL(1006, "Invalid Verify Email", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(1007, "Invalid password", HttpStatus.BAD_REQUEST),
+    CATEGORY_EXISTED(1008, "Category already exists", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOTFOUND(1009, "Category not found", HttpStatus.NOT_FOUND),
+    CHANNEL_NOT_FOUND(1010, "Channel not found", HttpStatus.NOT_FOUND),
+    VIDEO_NOT_FOUND(1011, "Video not found", HttpStatus.NOT_FOUND),
     ;
 
     private int code;
