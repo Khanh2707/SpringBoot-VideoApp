@@ -1,29 +1,20 @@
 package com.phuckhanh.VideoApp.service;
 
-import com.phuckhanh.VideoApp.dto.request.CategoryCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
-import com.phuckhanh.VideoApp.dto.response.CategoryResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
-import com.phuckhanh.VideoApp.entity.Category;
-import com.phuckhanh.VideoApp.entity.Channel;
-import com.phuckhanh.VideoApp.entity.Video;
+import com.phuckhanh.VideoApp.entity.*;
 import com.phuckhanh.VideoApp.exception.AppException;
 import com.phuckhanh.VideoApp.exception.ErrorCode;
 import com.phuckhanh.VideoApp.mapper.VideoMapper;
-import com.phuckhanh.VideoApp.repository.CategoryRepository;
-import com.phuckhanh.VideoApp.repository.ChannelRepository;
-import com.phuckhanh.VideoApp.repository.VideoRepository;
+import com.phuckhanh.VideoApp.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +26,8 @@ public class VideoService {
     CloudinaryService cloudinaryService;
     CategoryRepository categoryRepository;
     ChannelRepository channelRepository;
+    NotificationVideoRepository notificationVideoRepository;
+    private final HistoryNotificationVideoRepository historyNotificationVideoRepository;
 
     public VideoResponse createVideo(VideoCreationRequest request) throws IOException {
         Video video = videoMapper.toVideo(request);
@@ -49,13 +42,12 @@ public class VideoService {
 
         video.setTitle(request.getTitle());
         video.setLinkVideo(urlVideo);
-        if (!request.getDescription().isEmpty())
-            video.setDescription(request.getDescription());
-        if (!request.getFileImagePreview().isEmpty())
-            video.setImagePreview(urlImagePreview);
+        video.setImagePreview(urlImagePreview);
         video.setDateTimeCreate(LocalDateTime.now());
         video.setHide(request.getHide());
         video.setBan(false);
+        if (!request.getDescription().isEmpty())
+            video.setDescription(request.getDescription());
 
         Category category = categoryRepository.findById(request.getIdCategory()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOTFOUND));
         video.setCategory(category);
@@ -65,11 +57,27 @@ public class VideoService {
 
         videoRepository.save(video);
 
+        NotificationVideo notificationVideo = new NotificationVideo();
+        notificationVideo.setVideo(video);
+        notificationVideoRepository.save(notificationVideo);
+
+//        HistoryNotificationVideo historyNotificationVideo = new HistoryNotificationVideo();
+//        historyNotificationVideo.setIdHistoryNotificationVideoKey(new HistoryNotificationVideoKey(channel.getIdChannel(), notificationVideo.getIdNotificationVideo()));
+//        historyNotificationVideo.setChannel(channel);
+//        historyNotificationVideo.setNotificationVideo(notificationVideo);
+//        historyNotificationVideo.setIsCheck(false);
+//
+//        historyNotificationVideoRepository.save(historyNotificationVideo);
+
         return videoMapper.toVideoResponse(video);
     }
 
     public void deleteVideo(Integer idVideo) throws IOException {
         Video video = videoRepository.findById(idVideo).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
+
+        for (HistoryNotificationVideo historyNotificationVideo : video.getNotificationVideo().getHistoryNotificationVideos()) {
+            historyNotificationVideoRepository.delete(historyNotificationVideo);
+        }
 
         cloudinaryService.destroyFile("video", video.getLinkVideo(), "video");
         cloudinaryService.destroyFile("image preview", video.getImagePreview(), "image");

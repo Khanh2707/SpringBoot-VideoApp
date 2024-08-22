@@ -13,22 +13,15 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Channel {
+public class NotificationVideo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer idChannel;
-    String avatar;
-    String name;
-    String nameUnique;
-    String description;
+    Integer idNotificationVideo;
 
     @OneToOne
-    @JoinColumn(name = "id_account_channel", referencedColumnName = "idAccount")
-    Account account;
+    @JoinColumn(name = "id_video_notification_video", referencedColumnName = "idVideo")
+    Video video;
 
-    @OneToMany(mappedBy = "channel")
-    List<Video> videos;
-
-    @OneToMany(mappedBy = "channel")
+    @OneToMany(mappedBy = "notificationVideo")
     List<HistoryNotificationVideo> historyNotificationVideos;
 }

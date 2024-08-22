@@ -25,6 +25,9 @@ public class Video {
     Boolean hide;
     Boolean ban;
 
+    @OneToOne(mappedBy = "video", cascade = CascadeType.ALL)
+    NotificationVideo notificationVideo;
+
     @ManyToOne
     @JoinColumn(name = "id_category_video")
     Category category;

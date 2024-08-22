@@ -1,6 +1,7 @@
 package com.phuckhanh.VideoApp.service;
 
 import com.phuckhanh.VideoApp.dto.request.CategoryCreationRequest;
+import com.phuckhanh.VideoApp.dto.response.AccountResponse;
 import com.phuckhanh.VideoApp.dto.response.CategoryResponse;
 import com.phuckhanh.VideoApp.entity.Category;
 import com.phuckhanh.VideoApp.exception.AppException;
@@ -13,6 +14,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -21,6 +24,12 @@ public class CategoryService {
     CategoryRepository categoryRepository;
 
     CategoryMapper categoryMapper;
+
+    public List<CategoryResponse> getAllCategory() {
+        return categoryRepository.findAll().stream()
+                .map(categoryMapper::toCategoryResponse)
+                .toList();
+    }
 
     public CategoryResponse createCategory(CategoryCreationRequest request) {
         if (categoryRepository.existsByNameCategory(request.getNameCategory()))
