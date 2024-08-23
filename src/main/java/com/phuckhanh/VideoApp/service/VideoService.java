@@ -1,6 +1,7 @@
 package com.phuckhanh.VideoApp.service;
 
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
+import com.phuckhanh.VideoApp.dto.response.AccountResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.entity.*;
 import com.phuckhanh.VideoApp.exception.AppException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,16 @@ public class VideoService {
     ChannelRepository channelRepository;
     NotificationVideoRepository notificationVideoRepository;
     private final HistoryNotificationVideoRepository historyNotificationVideoRepository;
+
+    public List<VideoResponse> getAllByChannelNameUnique(String nameUniqueChannel) {
+        return videoRepository.findAllByChannel_NameUnique(nameUniqueChannel).stream()
+                .map(videoMapper::toVideoResponse)
+                .toList();
+    }
+
+    public long countAllByChannelNameUnique(String nameUniqueChannel) {
+        return videoRepository.countByChannelNameUnique(nameUniqueChannel);
+    }
 
     public VideoResponse createVideo(VideoCreationRequest request) throws IOException {
         Video video = videoMapper.toVideo(request);

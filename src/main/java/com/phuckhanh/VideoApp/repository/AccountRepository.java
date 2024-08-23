@@ -14,6 +14,8 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 
     Optional<Account> findByUsername(String username);
 
+    Optional<Account> findAccountByChannel_NameUnique(String nameUniqueChannel);
+
     List<Account> findByChannel_NameContaining(String idChannel);
 
     @Transactional

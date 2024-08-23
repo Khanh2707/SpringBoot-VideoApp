@@ -28,10 +28,17 @@ public class AccountController {
                 .build();
     }
 
-    @GetMapping("/by_channel/{nameChannel}")
-    ApiResponse<List<AccountResponse>> getListAccountByNameChannel(@PathVariable String nameChannel) {
+    @GetMapping("/by/channel/name_unique/{nameUniqueChannel}")
+    ApiResponse<AccountResponse> getAccountByChannelNameUnique(@PathVariable String nameUniqueChannel) {
+        return ApiResponse.<AccountResponse>builder()
+                .result(accountService.getAccountByChannelNameUnique(nameUniqueChannel))
+                .build();
+    }
+
+    @GetMapping("/all/by/channel/name/{nameChannel}")
+    ApiResponse<List<AccountResponse>> getAllAccountByChannelName(@PathVariable String nameChannel) {
         return ApiResponse.<List<AccountResponse>>builder()
-                .result(accountService.getListAccountByNameChannel(nameChannel))
+                .result(accountService.getAllAccountByChannelName(nameChannel))
                 .build();
     }
 

@@ -52,7 +52,13 @@ public class AccountService {
         return accountMapper.toAccountResponse(account);
     }
 
-    public List<AccountResponse> getListAccountByNameChannel(String nameChannel) {
+    public AccountResponse getAccountByChannelNameUnique(String nameUniqueChannel) {
+        Account account = accountRepository.findAccountByChannel_NameUnique(nameUniqueChannel).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        return accountMapper.toAccountResponse(account);
+    }
+
+    public List<AccountResponse> getAllAccountByChannelName(String nameChannel) {
         return accountRepository.findByChannel_NameContaining(nameChannel).stream()
                 .map(accountMapper::toAccountResponse)
                 .toList();
