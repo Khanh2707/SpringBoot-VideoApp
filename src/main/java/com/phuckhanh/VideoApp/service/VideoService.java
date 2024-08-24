@@ -1,7 +1,6 @@
 package com.phuckhanh.VideoApp.service;
 
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
-import com.phuckhanh.VideoApp.dto.response.AccountResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.entity.*;
 import com.phuckhanh.VideoApp.exception.AppException;
@@ -29,7 +28,13 @@ public class VideoService {
     CategoryRepository categoryRepository;
     ChannelRepository channelRepository;
     NotificationVideoRepository notificationVideoRepository;
-    private final HistoryNotificationVideoRepository historyNotificationVideoRepository;
+    HistoryNotificationVideoRepository historyNotificationVideoRepository;
+
+    public VideoResponse getById(Integer id) {
+        Video video = videoRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
+
+        return videoMapper.toVideoResponse(video);
+    }
 
     public List<VideoResponse> getAllByChannelNameUnique(String nameUniqueChannel) {
         return videoRepository.findAllByChannel_NameUnique(nameUniqueChannel).stream()

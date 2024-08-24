@@ -25,6 +25,13 @@ import java.util.List;
 public class VideoController {
     VideoService videoService;
 
+    @GetMapping("/{id}")
+    ApiResponse<VideoResponse> getById(@PathVariable Integer id) {
+        return ApiResponse.<VideoResponse>builder()
+                .result(videoService.getById(id))
+                .build();
+    }
+
     @GetMapping("/all/by/channel/name_unique/{nameUniqueChannel}")
     ApiResponse<List<VideoResponse>> getAllByChannelNameUnique(@PathVariable String nameUniqueChannel) {
         return ApiResponse.<List<VideoResponse>>builder()
