@@ -18,6 +18,7 @@ public enum ErrorCode {
     CATEGORY_NOTFOUND(1009, "Category not found", HttpStatus.NOT_FOUND),
     CHANNEL_NOT_FOUND(1010, "Channel not found", HttpStatus.NOT_FOUND),
     VIDEO_NOT_FOUND(1011, "Video not found", HttpStatus.NOT_FOUND),
+    CHANNEL_SUB_CHANNEL_NOT_FOUND(1012, "Channel sub channel not found", HttpStatus.NOT_FOUND),
     ;
 
     private int code;
