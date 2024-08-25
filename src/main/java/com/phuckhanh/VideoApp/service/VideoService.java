@@ -1,5 +1,6 @@
 package com.phuckhanh.VideoApp.service;
 
+import com.phuckhanh.VideoApp.dto.request.HistoryLikeVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.response.ChannelResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
@@ -30,7 +31,26 @@ public class VideoService {
     ChannelRepository channelRepository;
     NotificationVideoRepository notificationVideoRepository;
     HistoryNotificationVideoRepository historyNotificationVideoRepository;
-    private final ChannelSubChannelRepository channelSubChannelRepository;
+    ChannelSubChannelRepository channelSubChannelRepository;
+    HistoryLikeVideoRepository historyLikeVideoRepository;
+
+    public long countChannelLikeVideo(Integer idVideo) {
+        return historyLikeVideoRepository.countChannelLikeVideo(idVideo);
+    }
+
+    public boolean isChannelLikeVideo(Integer idChannel, Integer idVideo) {
+        return historyLikeVideoRepository.isChannelLikeVideo(idChannel, idVideo);
+    }
+
+    public void createHistoryLikeVideo(HistoryLikeVideoCreationRequest request) {
+        HistoryLikeVideo historyLikeVideo = new HistoryLikeVideo();
+
+        historyLikeVideo.setChannel(channelRepository.findById(request.getIdChannel()).orElseThrow(() -> new AppException(ErrorCode.CHANNEL_NOT_FOUND)));
+        historyLikeVideo.setVideo(videoRepository.findById(request.getIdVideo()).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND)));
+        historyLikeVideo.setIdHistoryLikeVideoKey(new HistoryLikeVideoKey(request.getIdChannel(), request.getIdVideo()));
+
+        historyLikeVideoRepository.save(historyLikeVideo);
+    }
 
     public VideoResponse getById(Integer id) {
         Video video = videoRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
@@ -104,5 +124,12 @@ public class VideoService {
         cloudinaryService.destroyFile("image preview", video.getImagePreview(), "image");
 
         videoRepository.deleteById(idVideo);
+    }
+
+    public void deleteHistoryLikeVideo(Integer idChannel, Integer idVideo) {
+        HistoryLikeVideo historyLikeVideo = historyLikeVideoRepository.findById(new HistoryLikeVideoKey(idChannel, idVideo))
+                .orElseThrow(() -> new AppException(ErrorCode.HISTORY_LIKE_VIDEO_NOT_FOUND));
+
+        historyLikeVideoRepository.delete(historyLikeVideo);
     }
 }
