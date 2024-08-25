@@ -1,6 +1,7 @@
 package com.phuckhanh.VideoApp.service;
 
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
+import com.phuckhanh.VideoApp.dto.response.ChannelResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.entity.*;
 import com.phuckhanh.VideoApp.exception.AppException;
@@ -29,6 +30,7 @@ public class VideoService {
     ChannelRepository channelRepository;
     NotificationVideoRepository notificationVideoRepository;
     HistoryNotificationVideoRepository historyNotificationVideoRepository;
+    private final ChannelSubChannelRepository channelSubChannelRepository;
 
     public VideoResponse getById(Integer id) {
         Video video = videoRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
@@ -78,13 +80,15 @@ public class VideoService {
         notificationVideo.setVideo(video);
         notificationVideoRepository.save(notificationVideo);
 
-//        HistoryNotificationVideo historyNotificationVideo = new HistoryNotificationVideo();
-//        historyNotificationVideo.setIdHistoryNotificationVideoKey(new HistoryNotificationVideoKey(channel.getIdChannel(), notificationVideo.getIdNotificationVideo()));
-//        historyNotificationVideo.setChannel(channel);
-//        historyNotificationVideo.setNotificationVideo(notificationVideo);
-//        historyNotificationVideo.setIsCheck(false);
-//
-//        historyNotificationVideoRepository.save(historyNotificationVideo);
+        channelSubChannelRepository.findByChannel2_IdChannel(channel.getIdChannel()).forEach(
+                channelSubChannel -> {
+                    HistoryNotificationVideo historyNotificationVideo = new HistoryNotificationVideo();
+                    historyNotificationVideo.setIdHistoryNotificationVideoKey(new HistoryNotificationVideoKey(channelSubChannel.getChannel1().getIdChannel(), notificationVideo.getIdNotificationVideo()));
+                    historyNotificationVideo.setChannel(channelSubChannel.getChannel1());
+                    historyNotificationVideo.setNotificationVideo(notificationVideo);
+                    historyNotificationVideo.setIsCheck(false);
+                    historyNotificationVideoRepository.save(historyNotificationVideo);
+                });
 
         return videoMapper.toVideoResponse(video);
     }

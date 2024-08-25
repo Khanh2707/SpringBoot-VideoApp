@@ -2,12 +2,16 @@ package com.phuckhanh.VideoApp.controller;
 
 import com.phuckhanh.VideoApp.dto.request.ChannelSubChannelRequest;
 import com.phuckhanh.VideoApp.dto.response.ApiResponse;
+import com.phuckhanh.VideoApp.dto.response.ChannelResponse;
+import com.phuckhanh.VideoApp.entity.ChannelSubChannel;
 import com.phuckhanh.VideoApp.service.ChannelService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/channels")
@@ -18,16 +22,23 @@ public class ChannelController {
     ChannelService channelService;
 
     @GetMapping("/count/sub/{idChannel2}")
-    public ApiResponse<Long> countSubChannel(@PathVariable int idChannel2) {
+    public ApiResponse<Long> countSubChannel(@PathVariable Integer idChannel2) {
         return ApiResponse.<Long>builder()
                 .result(channelService.countUser1SubForUser2(idChannel2))
                 .build();
     }
 
     @GetMapping("/is/sub/{idChannel1}/{idChannel2}")
-    public ApiResponse<Boolean> checkChannelSubChannel(@PathVariable int idChannel1, @PathVariable int idChannel2) {
+    public ApiResponse<Boolean> checkChannelSubChannel(@PathVariable Integer idChannel1, @PathVariable Integer idChannel2) {
         return ApiResponse.<Boolean>builder()
                 .result(channelService.isUser1SubscribingUser2(idChannel1, idChannel2))
+                .build();
+    }
+
+    @GetMapping("/all/sub/{idChannel2}")
+    public ApiResponse<List<ChannelResponse>> getAllSubChannel(@PathVariable Integer idChannel2) {
+        return ApiResponse.<List<ChannelResponse>>builder()
+                .result(channelService.getAllSubChannel(idChannel2))
                 .build();
     }
 
