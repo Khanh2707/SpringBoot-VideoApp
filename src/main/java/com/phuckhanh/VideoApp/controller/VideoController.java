@@ -1,14 +1,18 @@
 package com.phuckhanh.VideoApp.controller;
 
+import com.cloudinary.Api;
 import com.phuckhanh.VideoApp.dto.request.HistoryLikeVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.response.ApiResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.service.VideoService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -21,6 +25,11 @@ import java.util.List;
 @Slf4j
 public class VideoController {
     VideoService videoService;
+
+    @GetMapping("/download/{idVideo}")
+    public void downloadVideo(@PathVariable("idVideo") Integer idVideo, HttpServletResponse response) throws IOException {
+        videoService.downloadVideo(idVideo, response);
+    }
 
     @GetMapping("/count/like/{idVideo}")
     public ApiResponse<Long> countChannelLikeVideo(@PathVariable Integer idVideo) {

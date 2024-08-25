@@ -2,20 +2,26 @@ package com.phuckhanh.VideoApp.service;
 
 import com.phuckhanh.VideoApp.dto.request.HistoryLikeVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
-import com.phuckhanh.VideoApp.dto.response.ChannelResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.entity.*;
 import com.phuckhanh.VideoApp.exception.AppException;
 import com.phuckhanh.VideoApp.exception.ErrorCode;
 import com.phuckhanh.VideoApp.mapper.VideoMapper;
 import com.phuckhanh.VideoApp.repository.*;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,6 +39,43 @@ public class VideoService {
     HistoryNotificationVideoRepository historyNotificationVideoRepository;
     ChannelSubChannelRepository channelSubChannelRepository;
     HistoryLikeVideoRepository historyLikeVideoRepository;
+
+    public void downloadVideo(Integer idVideo, HttpServletResponse response) throws IOException {
+        Video video = videoRepository.findById(idVideo).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
+        String videoUrl = video.getLinkVideo();
+
+        URL url = new URL(videoUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        // Get the media type of the file
+        String contentType = connection.getContentType();
+        if (contentType == null) {
+            // Use the default media type
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        response.setContentType(contentType);
+
+        // Set Content-Disposition header
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
+                .filename("video.mp4", StandardCharsets.UTF_8)
+                .build()
+                .toString());
+
+        // Copy data from the URL connection to the response output stream
+        try (InputStream inputStream = connection.getInputStream();
+             OutputStream outputStream = response.getOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            throw new IOException("Failed to download video", e);
+        }
+    }
+
 
     public long countChannelLikeVideo(Integer idVideo) {
         return historyLikeVideoRepository.countChannelLikeVideo(idVideo);
