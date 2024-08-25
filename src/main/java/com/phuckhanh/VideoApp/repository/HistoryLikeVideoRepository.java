@@ -16,5 +16,5 @@ public interface HistoryLikeVideoRepository extends JpaRepository<HistoryLikeVid
     @Query("SELECT CASE WHEN COUNT(h) > 0 THEN true ELSE false END FROM HistoryLikeVideo h WHERE h.channel.idChannel = :idChannel AND h.video.idVideo = :idVideo")
     boolean isChannelLikeVideo(Integer idChannel, Integer idVideo);
 
-    List<HistoryLikeVideo> findByVideo_IdVideo(Integer idChannel2);
+    List<HistoryLikeVideo> findAllByVideo_IdVideo(Integer idVideo);
 }

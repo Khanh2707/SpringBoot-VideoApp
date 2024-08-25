@@ -22,6 +22,7 @@ public class Video {
     String description;
     String imagePreview;
     LocalDateTime dateTimeCreate;
+    Integer view;
     Boolean hide;
     Boolean ban;
 

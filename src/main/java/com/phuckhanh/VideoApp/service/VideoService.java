@@ -1,7 +1,9 @@
 package com.phuckhanh.VideoApp.service;
 
 import com.phuckhanh.VideoApp.dto.request.HistoryLikeVideoCreationRequest;
+import com.phuckhanh.VideoApp.dto.request.HistoryWatchVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
+import com.phuckhanh.VideoApp.dto.response.ChannelResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.entity.*;
 import com.phuckhanh.VideoApp.exception.AppException;
@@ -39,6 +41,7 @@ public class VideoService {
     HistoryNotificationVideoRepository historyNotificationVideoRepository;
     ChannelSubChannelRepository channelSubChannelRepository;
     HistoryLikeVideoRepository historyLikeVideoRepository;
+    HistoryWatchVideoRepository historyWatchVideoRepository;
 
     public void downloadVideo(Integer idVideo, HttpServletResponse response) throws IOException {
         Video video = videoRepository.findById(idVideo).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
@@ -76,13 +79,34 @@ public class VideoService {
         }
     }
 
-
     public long countChannelLikeVideo(Integer idVideo) {
         return historyLikeVideoRepository.countChannelLikeVideo(idVideo);
     }
 
     public boolean isChannelLikeVideo(Integer idChannel, Integer idVideo) {
         return historyLikeVideoRepository.isChannelLikeVideo(idChannel, idVideo);
+    }
+
+    public List<VideoResponse> getAllVideoChannelWatched(Integer idChannel) {
+        return historyWatchVideoRepository.findAllByChannel_IdChannelOrderByDateTimeWatchDesc(idChannel).stream()
+                .map(historyWatchVideo -> videoMapper.toVideoResponse(historyWatchVideo.getVideo()))
+                .toList();
+    }
+
+    public VideoResponse getById(Integer id) {
+        Video video = videoRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
+
+        return videoMapper.toVideoResponse(video);
+    }
+
+    public List<VideoResponse> getAllByChannelNameUnique(String nameUniqueChannel) {
+        return videoRepository.findAllByChannel_NameUniqueOrderByDateTimeCreateDesc(nameUniqueChannel).stream()
+                .map(videoMapper::toVideoResponse)
+                .toList();
+    }
+
+    public long countAllByChannelNameUnique(String nameUniqueChannel) {
+        return videoRepository.countByChannelNameUnique(nameUniqueChannel);
     }
 
     public void createHistoryLikeVideo(HistoryLikeVideoCreationRequest request) {
@@ -95,20 +119,15 @@ public class VideoService {
         historyLikeVideoRepository.save(historyLikeVideo);
     }
 
-    public VideoResponse getById(Integer id) {
-        Video video = videoRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
+    public void createHistoryWatchVideo(HistoryWatchVideoCreationRequest request) {
+        HistoryWatchVideo historyWatchVideo = new HistoryWatchVideo();
 
-        return videoMapper.toVideoResponse(video);
-    }
+        historyWatchVideo.setChannel(channelRepository.findById(request.getIdChannel()).orElseThrow(() -> new AppException(ErrorCode.CHANNEL_NOT_FOUND)));
+        historyWatchVideo.setVideo(videoRepository.findById(request.getIdVideo()).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND)));
+        historyWatchVideo.setDateTimeWatch(LocalDateTime.now());
+        historyWatchVideo.setIdHistoryWatchVideoKey(new HistoryWatchVideoKey(request.getIdChannel(), request.getIdVideo()));
 
-    public List<VideoResponse> getAllByChannelNameUnique(String nameUniqueChannel) {
-        return videoRepository.findAllByChannel_NameUnique(nameUniqueChannel).stream()
-                .map(videoMapper::toVideoResponse)
-                .toList();
-    }
-
-    public long countAllByChannelNameUnique(String nameUniqueChannel) {
-        return videoRepository.countByChannelNameUnique(nameUniqueChannel);
+        historyWatchVideoRepository.save(historyWatchVideo);
     }
 
     public VideoResponse createVideo(VideoCreationRequest request) throws IOException {
@@ -126,6 +145,7 @@ public class VideoService {
         video.setLinkVideo(urlVideo);
         video.setImagePreview(urlImagePreview);
         video.setDateTimeCreate(LocalDateTime.now());
+        video.setView(0);
         video.setHide(request.getHide());
         video.setBan(false);
         if (!request.getDescription().isEmpty())
@@ -161,6 +181,16 @@ public class VideoService {
 
         for (HistoryNotificationVideo historyNotificationVideo : video.getNotificationVideo().getHistoryNotificationVideos()) {
             historyNotificationVideoRepository.delete(historyNotificationVideo);
+        }
+
+        List<HistoryLikeVideo> historyLikeVideos = historyLikeVideoRepository.findAllByVideo_IdVideo(idVideo);
+        for (HistoryLikeVideo historyLikeVideo : historyLikeVideos) {
+            historyLikeVideoRepository.delete(historyLikeVideo);
+        }
+
+        List<HistoryWatchVideo> historyWatchVideos = historyWatchVideoRepository.findAllByVideo_IdVideo(idVideo);
+        for (HistoryWatchVideo historyWatchVideo : historyWatchVideos) {
+            historyWatchVideoRepository.delete(historyWatchVideo);
         }
 
         cloudinaryService.destroyFile("video", video.getLinkVideo(), "video");

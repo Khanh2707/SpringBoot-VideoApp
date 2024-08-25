@@ -17,6 +17,7 @@ public class VideoResponse {
     String description;
     String imagePreview;
     LocalDateTime dateTimeCreate;
+    Integer view;
     Boolean hide;
     Boolean ban;
     CategoryResponse category;

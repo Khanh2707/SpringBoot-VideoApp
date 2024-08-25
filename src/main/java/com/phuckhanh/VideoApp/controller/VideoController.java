@@ -1,7 +1,7 @@
 package com.phuckhanh.VideoApp.controller;
 
-import com.cloudinary.Api;
 import com.phuckhanh.VideoApp.dto.request.HistoryLikeVideoCreationRequest;
+import com.phuckhanh.VideoApp.dto.request.HistoryWatchVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.response.ApiResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
@@ -11,8 +11,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -45,6 +43,13 @@ public class VideoController {
                 .build();
     }
 
+    @GetMapping("/all/video/channel/watched/{idChannel}")
+    ApiResponse<List<VideoResponse>> getAllVideoChannelWatched(@PathVariable Integer idChannel) {
+        return ApiResponse.<List<VideoResponse>>builder()
+                .result(videoService.getAllVideoChannelWatched(idChannel))
+                .build();
+    }
+
     @GetMapping("/{id}")
     ApiResponse<VideoResponse> getById(@PathVariable Integer id) {
         return ApiResponse.<VideoResponse>builder()
@@ -63,6 +68,15 @@ public class VideoController {
     ApiResponse<Long> countAllByChannelNameUnique(@PathVariable String nameUniqueChannel) {
         return ApiResponse.<Long>builder()
                 .result(videoService.countAllByChannelNameUnique(nameUniqueChannel))
+                .build();
+    }
+
+    @PostMapping("/watch")
+    ApiResponse<String> createHistoryWatchVideo(@RequestBody HistoryWatchVideoCreationRequest request) {
+        videoService.createHistoryWatchVideo(request);
+        String resultMessage = String.format("Channel %d watch Video %d success", request.getIdChannel(), request.getIdVideo());
+        return ApiResponse.<String>builder()
+                .result(resultMessage)
                 .build();
     }
 
