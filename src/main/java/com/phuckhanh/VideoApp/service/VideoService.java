@@ -205,4 +205,14 @@ public class VideoService {
 
         historyLikeVideoRepository.delete(historyLikeVideo);
     }
+
+    public void deleteAllHistoryWatchVideosByChannel(Integer idChannel) {
+        List<HistoryWatchVideo> historyWatchVideos = historyWatchVideoRepository.findAllByChannel_IdChannel(idChannel);
+
+        if (historyWatchVideos.isEmpty()) {
+            throw new AppException(ErrorCode.HISTORY_WATCH_VIDEO_NOT_FOUND);
+        }
+
+        historyWatchVideoRepository.deleteAll(historyWatchVideos);
+    }
 }

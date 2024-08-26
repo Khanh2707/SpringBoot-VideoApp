@@ -112,4 +112,13 @@ public class VideoController {
                 .result(resultMessage)
                 .build();
     }
+
+    @DeleteMapping("/all/watch/{idChannel}")
+    ApiResponse<String> deleteHistoryWatchVideo(@PathVariable Integer idChannel) {
+        videoService.deleteAllHistoryWatchVideosByChannel(idChannel);
+        String resultMessage = String.format("Channel %d delete all watched Video", idChannel);
+        return ApiResponse.<String>builder()
+                .result(resultMessage)
+                .build();
+    }
 }
