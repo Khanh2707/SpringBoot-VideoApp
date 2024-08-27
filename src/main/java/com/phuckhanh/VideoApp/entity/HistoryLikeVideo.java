@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -24,4 +26,6 @@ public class HistoryLikeVideo {
     @MapsId("idVideo")
     @JoinColumn(name = "id_video_history_like_video")
     Video video;
+
+    LocalDateTime dateTimeLike;
 }

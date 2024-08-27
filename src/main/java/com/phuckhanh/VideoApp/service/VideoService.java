@@ -92,6 +92,12 @@ public class VideoService {
                 .toList();
     }
 
+    public List<VideoResponse> getAllVideoChannelLiked(Integer idChannel) {
+        return historyLikeVideoRepository.findAllByChannel_IdChannelOrderByDateTimeLikeDesc(idChannel).stream()
+                .map(historyLikeVideo -> videoMapper.toVideoResponse(historyLikeVideo.getVideo()))
+                .toList();
+    }
+
     public VideoResponse getById(Integer id) {
         Video video = videoRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
 
@@ -119,6 +125,7 @@ public class VideoService {
 
         historyLikeVideo.setChannel(channelRepository.findById(request.getIdChannel()).orElseThrow(() -> new AppException(ErrorCode.CHANNEL_NOT_FOUND)));
         historyLikeVideo.setVideo(videoRepository.findById(request.getIdVideo()).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND)));
+        historyLikeVideo.setDateTimeLike(LocalDateTime.now());
         historyLikeVideo.setIdHistoryLikeVideoKey(new HistoryLikeVideoKey(request.getIdChannel(), request.getIdVideo()));
 
         historyLikeVideoRepository.save(historyLikeVideo);

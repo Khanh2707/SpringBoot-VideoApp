@@ -17,4 +17,6 @@ public interface HistoryLikeVideoRepository extends JpaRepository<HistoryLikeVid
     boolean isChannelLikeVideo(Integer idChannel, Integer idVideo);
 
     List<HistoryLikeVideo> findAllByVideo_IdVideo(Integer idVideo);
+
+    List<HistoryLikeVideo> findAllByChannel_IdChannelOrderByDateTimeLikeDesc(Integer idChannel);
 }

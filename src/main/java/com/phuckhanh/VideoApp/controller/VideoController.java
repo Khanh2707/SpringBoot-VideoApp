@@ -50,6 +50,13 @@ public class VideoController {
                 .build();
     }
 
+    @GetMapping("/all/video/channel/liked/{idChannel}")
+    ApiResponse<List<VideoResponse>> getAllVideoChannelLiked(@PathVariable Integer idChannel) {
+        return ApiResponse.<List<VideoResponse>>builder()
+                .result(videoService.getAllVideoChannelLiked(idChannel))
+                .build();
+    }
+
     @GetMapping("/{id}")
     ApiResponse<VideoResponse> getById(@PathVariable Integer id) {
         return ApiResponse.<VideoResponse>builder()
