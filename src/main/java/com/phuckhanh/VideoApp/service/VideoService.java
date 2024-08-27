@@ -3,7 +3,6 @@ package com.phuckhanh.VideoApp.service;
 import com.phuckhanh.VideoApp.dto.request.HistoryLikeVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.HistoryWatchVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
-import com.phuckhanh.VideoApp.dto.response.ChannelResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.entity.*;
 import com.phuckhanh.VideoApp.exception.AppException;
@@ -107,6 +106,12 @@ public class VideoService {
 
     public long countAllByChannelNameUnique(String nameUniqueChannel) {
         return videoRepository.countByChannelNameUnique(nameUniqueChannel);
+    }
+
+    public List<VideoResponse> getAllVideo() {
+        return videoRepository.findAllByOrderByDateTimeCreateDesc().stream()
+                .map(videoMapper::toVideoResponse)
+                .toList();
     }
 
     public void createHistoryLikeVideo(HistoryLikeVideoCreationRequest request) {

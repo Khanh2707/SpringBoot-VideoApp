@@ -10,6 +10,8 @@ import java.util.List;
 
 @Repository
 public interface VideoRepository extends JpaRepository<Video, Integer> {
+    List<Video> findAllByOrderByDateTimeCreateDesc();
+
     @Query("SELECT COUNT(v) FROM Video v WHERE v.channel.nameUnique = :nameUniqueChannel")
     long countByChannelNameUnique(@Param("nameUniqueChannel") String nameUniqueChannel);
 

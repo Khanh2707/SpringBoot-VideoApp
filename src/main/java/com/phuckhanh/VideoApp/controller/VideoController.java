@@ -71,6 +71,13 @@ public class VideoController {
                 .build();
     }
 
+    @GetMapping("")
+    ApiResponse<List<VideoResponse>> getAllVideo() {
+        return ApiResponse.<List<VideoResponse>>builder()
+                .result(videoService.getAllVideo())
+                .build();
+    }
+
     @PostMapping("/watch")
     ApiResponse<String> createHistoryWatchVideo(@RequestBody HistoryWatchVideoCreationRequest request) {
         videoService.createHistoryWatchVideo(request);
