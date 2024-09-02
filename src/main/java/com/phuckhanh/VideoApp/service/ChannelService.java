@@ -1,7 +1,9 @@
 package com.phuckhanh.VideoApp.service;
 
 import com.phuckhanh.VideoApp.dto.request.ChannelSubChannelRequest;
+import com.phuckhanh.VideoApp.dto.request.ChannelUpdateAvatarRequest;
 import com.phuckhanh.VideoApp.dto.response.ChannelResponse;
+import com.phuckhanh.VideoApp.entity.Channel;
 import com.phuckhanh.VideoApp.entity.ChannelSubChannel;
 import com.phuckhanh.VideoApp.entity.ChannelSubChannelKey;
 import com.phuckhanh.VideoApp.exception.AppException;
@@ -15,6 +17,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -25,6 +28,7 @@ public class ChannelService {
     ChannelSubChannelRepository channelSubChannelRepository;
     ChannelRepository channelRepository;
     ChannelMapper channelMapper;
+    CloudinaryService cloudinaryService;
 
     public long countUser1SubForUser2(Integer idChannel2) {
         return channelSubChannelRepository.countUser1SubForUser2(idChannel2);
@@ -48,6 +52,24 @@ public class ChannelService {
         channelSubChannel.setIdChannelSubChannelKey(new ChannelSubChannelKey(request.getIdChannel1(), request.getIdChannel2()));
 
         channelSubChannelRepository.save(channelSubChannel);
+    }
+
+    public ChannelResponse updateChannelAvatar(Integer idChannel, ChannelUpdateAvatarRequest request) throws IOException {
+        Channel channel = channelRepository.findById(idChannel).orElseThrow(() -> new AppException(ErrorCode.CHANNEL_NOT_FOUND));
+
+        cloudinaryService.destroyFile("avatar channel", channel.getAvatar(), "image");
+
+        if (!request.getDelete().equals(true)) {
+            String urlAvatar = (String) cloudinaryService
+                    .uploadFile(request.getFileAvatar(), "avatar channel", "")
+                    .get("secure_url");
+
+            channel.setAvatar(urlAvatar);
+        } else {
+            channel.setAvatar(null);
+        }
+
+        return channelMapper.toChannelResponse(channelRepository.save(channel));
     }
 
     public void deleteChannelSubChannel(Integer idChannel1, Integer idChannel2) {
