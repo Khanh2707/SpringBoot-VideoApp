@@ -29,6 +29,13 @@ public class VideoController {
         videoService.downloadVideo(idVideo, response);
     }
 
+    @GetMapping("/all/notification/video/{idChannel}")
+    ApiResponse<List<VideoResponse>> getAllNotificationCreateVideo(@PathVariable Integer idChannel) {
+        return ApiResponse.<List<VideoResponse>>builder()
+                .result(videoService.getAllNotificationCreateVideo(idChannel))
+                .build();
+    }
+
     @GetMapping("/count/like/{idVideo}")
     public ApiResponse<Long> countChannelLikeVideo(@PathVariable Integer idVideo) {
         return ApiResponse.<Long>builder()
@@ -82,6 +89,13 @@ public class VideoController {
     ApiResponse<List<VideoResponse>> getAllVideo() {
         return ApiResponse.<List<VideoResponse>>builder()
                 .result(videoService.getAllVideo())
+                .build();
+    }
+
+    @GetMapping("/all/by/category/{idCategory}")
+    ApiResponse<List<VideoResponse>> getAllVideoByCategory(@PathVariable Integer idCategory) {
+        return ApiResponse.<List<VideoResponse>>builder()
+                .result(videoService.getAllVideoByCategory(idCategory))
                 .build();
     }
 

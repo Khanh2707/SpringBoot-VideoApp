@@ -24,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -78,6 +79,13 @@ public class VideoService {
         }
     }
 
+    public List<VideoResponse> getAllNotificationCreateVideo(Integer idChannel) {
+        return historyNotificationVideoRepository.findAllByChannel_IdChannel(idChannel).stream()
+                .map(historyNotificationVideo -> videoMapper.toVideoResponse(historyNotificationVideo.getNotificationVideo().getVideo()))
+                .sorted(Comparator.comparing(VideoResponse::getDateTimeCreate).reversed())
+                .toList();
+    }
+
     public long countChannelLikeVideo(Integer idVideo) {
         return historyLikeVideoRepository.countChannelLikeVideo(idVideo);
     }
@@ -116,6 +124,12 @@ public class VideoService {
 
     public List<VideoResponse> getAllVideo() {
         return videoRepository.findAllByOrderByDateTimeCreateDesc().stream()
+                .map(videoMapper::toVideoResponse)
+                .toList();
+    }
+
+    public List<VideoResponse> getAllVideoByCategory(Integer idCategory) {
+        return videoRepository.findAllByCategory_IdCategoryOrderByDateTimeCreateDesc(idCategory).stream()
                 .map(videoMapper::toVideoResponse)
                 .toList();
     }

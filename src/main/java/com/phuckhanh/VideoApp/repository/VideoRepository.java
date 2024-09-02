@@ -16,4 +16,6 @@ public interface VideoRepository extends JpaRepository<Video, Integer> {
     long countByChannelNameUnique(@Param("nameUniqueChannel") String nameUniqueChannel);
 
     List<Video> findAllByChannel_NameUniqueOrderByDateTimeCreateDesc(String nameUniqueChannel);
+
+    List<Video> findAllByCategory_IdCategoryOrderByDateTimeCreateDesc(Integer idCategory);
 }
