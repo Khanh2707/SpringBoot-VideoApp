@@ -2,6 +2,7 @@ package com.phuckhanh.VideoApp.service;
 
 import com.phuckhanh.VideoApp.dto.request.ChannelSubChannelRequest;
 import com.phuckhanh.VideoApp.dto.request.ChannelUpdateAvatarRequest;
+import com.phuckhanh.VideoApp.dto.request.ChannelUpdateInfoRawRequest;
 import com.phuckhanh.VideoApp.dto.response.ChannelResponse;
 import com.phuckhanh.VideoApp.entity.Channel;
 import com.phuckhanh.VideoApp.entity.ChannelSubChannel;
@@ -68,6 +69,17 @@ public class ChannelService {
         } else {
             channel.setAvatar(null);
         }
+
+        return channelMapper.toChannelResponse(channelRepository.save(channel));
+    }
+
+    public ChannelResponse updateChannelInfoRaw(Integer idChannel, ChannelUpdateInfoRawRequest request) {
+        Channel channel = channelRepository.findById(idChannel).orElseThrow(() -> new AppException(ErrorCode.CHANNEL_NOT_FOUND));
+
+        if (channelRepository.existsByNameUnique(request.getNameUnique()))
+            throw new AppException(ErrorCode.CHANNEL_NAME_UNIQUE_EXISTED);
+
+        channelMapper.updateChannelInfoRaw(channel, request);
 
         return channelMapper.toChannelResponse(channelRepository.save(channel));
     }

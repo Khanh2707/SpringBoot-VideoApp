@@ -2,6 +2,7 @@ package com.phuckhanh.VideoApp.controller;
 
 import com.phuckhanh.VideoApp.dto.request.ChannelSubChannelRequest;
 import com.phuckhanh.VideoApp.dto.request.ChannelUpdateAvatarRequest;
+import com.phuckhanh.VideoApp.dto.request.ChannelUpdateInfoRawRequest;
 import com.phuckhanh.VideoApp.dto.response.ApiResponse;
 import com.phuckhanh.VideoApp.dto.response.ChannelResponse;
 import com.phuckhanh.VideoApp.service.ChannelService;
@@ -56,6 +57,13 @@ public class ChannelController {
     ApiResponse<ChannelResponse> updateChannelAvatar(@PathVariable Integer idChannel, @ModelAttribute ChannelUpdateAvatarRequest request) throws IOException {
         return ApiResponse.<ChannelResponse>builder()
                 .result(channelService.updateChannelAvatar(idChannel, request))
+                .build();
+    }
+
+    @PutMapping("/info-raw/{idChannel}")
+    ApiResponse<ChannelResponse> updateChannelInfoRaw(@PathVariable Integer idChannel, @RequestBody ChannelUpdateInfoRawRequest request) {
+        return ApiResponse.<ChannelResponse>builder()
+                .result(channelService.updateChannelInfoRaw(idChannel, request))
                 .build();
     }
 

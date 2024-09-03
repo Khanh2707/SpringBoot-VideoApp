@@ -21,6 +21,7 @@ public enum ErrorCode {
     CHANNEL_SUB_CHANNEL_NOT_FOUND(1012, "Channel sub channel not found", HttpStatus.NOT_FOUND),
     HISTORY_LIKE_VIDEO_NOT_FOUND(1013, "History like video not found", HttpStatus.NOT_FOUND),
     HISTORY_WATCH_VIDEO_NOT_FOUND(1014, "History watch video not found", HttpStatus.NOT_FOUND),
+    CHANNEL_NAME_UNIQUE_EXISTED(1015, "Channel name unique already exists", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;
