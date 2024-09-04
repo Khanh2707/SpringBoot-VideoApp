@@ -14,6 +14,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -79,31 +82,16 @@ public class VideoService {
         }
     }
 
-    public List<VideoResponse> getAllNotificationCreateVideo(Integer idChannel) {
-        return historyNotificationVideoRepository.findAllByChannel_IdChannel(idChannel).stream()
-                .map(historyNotificationVideo -> videoMapper.toVideoResponse(historyNotificationVideo.getNotificationVideo().getVideo()))
-                .sorted(Comparator.comparing(VideoResponse::getDateTimeCreate).reversed())
-                .toList();
-    }
-
     public long countChannelLikeVideo(Integer idVideo) {
         return historyLikeVideoRepository.countChannelLikeVideo(idVideo);
     }
 
+    public long countAllByChannelNameUnique(String nameUniqueChannel) {
+        return videoRepository.countByChannelNameUnique(nameUniqueChannel);
+    }
+
     public boolean isChannelLikeVideo(Integer idChannel, Integer idVideo) {
         return historyLikeVideoRepository.isChannelLikeVideo(idChannel, idVideo);
-    }
-
-    public List<VideoResponse> getAllVideoChannelWatched(Integer idChannel) {
-        return historyWatchVideoRepository.findAllByChannel_IdChannelOrderByDateTimeWatchDesc(idChannel).stream()
-                .map(historyWatchVideo -> videoMapper.toVideoResponse(historyWatchVideo.getVideo()))
-                .toList();
-    }
-
-    public List<VideoResponse> getAllVideoChannelLiked(Integer idChannel) {
-        return historyLikeVideoRepository.findAllByChannel_IdChannelOrderByDateTimeLikeDesc(idChannel).stream()
-                .map(historyLikeVideo -> videoMapper.toVideoResponse(historyLikeVideo.getVideo()))
-                .toList();
     }
 
     public VideoResponse getById(Integer id) {
@@ -112,26 +100,41 @@ public class VideoService {
         return videoMapper.toVideoResponse(video);
     }
 
-    public List<VideoResponse> getAllByChannelNameUnique(String nameUniqueChannel) {
-        return videoRepository.findAllByChannel_NameUniqueOrderByDateTimeCreateDesc(nameUniqueChannel).stream()
-                .map(videoMapper::toVideoResponse)
+    public List<VideoResponse> getAllNotificationCreateVideo(Integer idChannel) {
+        return historyNotificationVideoRepository.findAllByChannel_IdChannel(idChannel).stream()
+                .map(historyNotificationVideo -> videoMapper.toVideoResponse(historyNotificationVideo.getNotificationVideo().getVideo()))
+                .sorted(Comparator.comparing(VideoResponse::getDateTimeCreate).reversed())
                 .toList();
     }
 
-    public long countAllByChannelNameUnique(String nameUniqueChannel) {
-        return videoRepository.countByChannelNameUnique(nameUniqueChannel);
+    public Page<VideoResponse> getAllVideoChannelWatched(Integer idChannel, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return historyWatchVideoRepository.findAllByChannel_IdChannelOrderByDateTimeWatchDesc(idChannel, pageable)
+                .map(historyWatchVideo -> videoMapper.toVideoResponse(historyWatchVideo.getVideo()));
     }
 
-    public List<VideoResponse> getAllVideo() {
-        return videoRepository.findAllByOrderByDateTimeCreateDesc().stream()
-                .map(videoMapper::toVideoResponse)
-                .toList();
+    public Page<VideoResponse> getAllVideoChannelLiked(Integer idChannel, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return historyLikeVideoRepository.findAllByChannel_IdChannelOrderByDateTimeLikeDesc(idChannel, pageable)
+                .map(historyLikeVideo -> videoMapper.toVideoResponse(historyLikeVideo.getVideo()));
     }
 
-    public List<VideoResponse> getAllVideoByCategory(Integer idCategory) {
-        return videoRepository.findAllByCategory_IdCategoryOrderByDateTimeCreateDesc(idCategory).stream()
-                .map(videoMapper::toVideoResponse)
-                .toList();
+    public Page<VideoResponse> getAllByChannelNameUnique(String nameUniqueChannel, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return videoRepository.findAllByChannel_NameUniqueOrderByDateTimeCreateDesc(nameUniqueChannel, pageable)
+                .map(videoMapper::toVideoResponse);
+    }
+
+    public Page<VideoResponse> getAllVideo(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return videoRepository.findAllByOrderByDateTimeCreateDesc(pageable)
+                .map(videoMapper::toVideoResponse);
+    }
+
+    public Page<VideoResponse> getAllVideoByCategory(Integer idCategory, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return videoRepository.findAllByCategory_IdCategoryOrderByDateTimeCreateDesc(idCategory, pageable)
+                .map(videoMapper::toVideoResponse);
     }
 
     public void createHistoryLikeVideo(HistoryLikeVideoCreationRequest request) {

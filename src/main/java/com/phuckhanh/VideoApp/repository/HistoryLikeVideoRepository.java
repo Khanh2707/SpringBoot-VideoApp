@@ -2,6 +2,8 @@ package com.phuckhanh.VideoApp.repository;
 
 import com.phuckhanh.VideoApp.entity.HistoryLikeVideo;
 import com.phuckhanh.VideoApp.entity.HistoryLikeVideoKey;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,5 +20,5 @@ public interface HistoryLikeVideoRepository extends JpaRepository<HistoryLikeVid
 
     List<HistoryLikeVideo> findAllByVideo_IdVideo(Integer idVideo);
 
-    List<HistoryLikeVideo> findAllByChannel_IdChannelOrderByDateTimeLikeDesc(Integer idChannel);
+    Page<HistoryLikeVideo> findAllByChannel_IdChannelOrderByDateTimeLikeDesc(Integer idChannel, Pageable pageable);
 }

@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -29,52 +30,10 @@ public class VideoController {
         videoService.downloadVideo(idVideo, response);
     }
 
-    @GetMapping("/all/notification/video/{idChannel}")
-    ApiResponse<List<VideoResponse>> getAllNotificationCreateVideo(@PathVariable Integer idChannel) {
-        return ApiResponse.<List<VideoResponse>>builder()
-                .result(videoService.getAllNotificationCreateVideo(idChannel))
-                .build();
-    }
-
     @GetMapping("/count/like/{idVideo}")
     public ApiResponse<Long> countChannelLikeVideo(@PathVariable Integer idVideo) {
         return ApiResponse.<Long>builder()
                 .result(videoService.countChannelLikeVideo(idVideo))
-                .build();
-    }
-
-    @GetMapping("/is/like/{idChannel}/{idVideo}")
-    public ApiResponse<Boolean> isChannelLikeVideo(@PathVariable Integer idChannel, @PathVariable Integer idVideo) {
-        return ApiResponse.<Boolean>builder()
-                .result(videoService.isChannelLikeVideo(idChannel, idVideo))
-                .build();
-    }
-
-    @GetMapping("/all/video/channel/watched/{idChannel}")
-    ApiResponse<List<VideoResponse>> getAllVideoChannelWatched(@PathVariable Integer idChannel) {
-        return ApiResponse.<List<VideoResponse>>builder()
-                .result(videoService.getAllVideoChannelWatched(idChannel))
-                .build();
-    }
-
-    @GetMapping("/all/video/channel/liked/{idChannel}")
-    ApiResponse<List<VideoResponse>> getAllVideoChannelLiked(@PathVariable Integer idChannel) {
-        return ApiResponse.<List<VideoResponse>>builder()
-                .result(videoService.getAllVideoChannelLiked(idChannel))
-                .build();
-    }
-
-    @GetMapping("/{id}")
-    ApiResponse<VideoResponse> getById(@PathVariable Integer id) {
-        return ApiResponse.<VideoResponse>builder()
-                .result(videoService.getById(id))
-                .build();
-    }
-
-    @GetMapping("/all/by/channel/name_unique/{nameUniqueChannel}")
-    ApiResponse<List<VideoResponse>> getAllByChannelNameUnique(@PathVariable String nameUniqueChannel) {
-        return ApiResponse.<List<VideoResponse>>builder()
-                .result(videoService.getAllByChannelNameUnique(nameUniqueChannel))
                 .build();
     }
 
@@ -85,17 +44,59 @@ public class VideoController {
                 .build();
     }
 
-    @GetMapping("")
-    ApiResponse<List<VideoResponse>> getAllVideo() {
-        return ApiResponse.<List<VideoResponse>>builder()
-                .result(videoService.getAllVideo())
+    @GetMapping("/is/like/{idChannel}/{idVideo}")
+    public ApiResponse<Boolean> isChannelLikeVideo(@PathVariable Integer idChannel, @PathVariable Integer idVideo) {
+        return ApiResponse.<Boolean>builder()
+                .result(videoService.isChannelLikeVideo(idChannel, idVideo))
                 .build();
     }
 
-    @GetMapping("/all/by/category/{idCategory}")
-    ApiResponse<List<VideoResponse>> getAllVideoByCategory(@PathVariable Integer idCategory) {
+    @GetMapping("/{id}")
+    ApiResponse<VideoResponse> getById(@PathVariable Integer id) {
+        return ApiResponse.<VideoResponse>builder()
+                .result(videoService.getById(id))
+                .build();
+    }
+
+    @GetMapping("/all/notification/video/{idChannel}")
+    ApiResponse<List<VideoResponse>> getAllNotificationCreateVideo(@PathVariable Integer idChannel) {
         return ApiResponse.<List<VideoResponse>>builder()
-                .result(videoService.getAllVideoByCategory(idCategory))
+                .result(videoService.getAllNotificationCreateVideo(idChannel))
+                .build();
+    }
+
+    @GetMapping("/all/video/channel/watched/{idChannel}/pageable/{page}/{size}")
+    ApiResponse<Page<VideoResponse>> getAllVideoChannelWatched(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<VideoResponse>>builder()
+                .result(videoService.getAllVideoChannelWatched(idChannel, page, size))
+                .build();
+    }
+
+    @GetMapping("/all/video/channel/liked/{idChannel}/pageable/{page}/{size}")
+    ApiResponse<Page<VideoResponse>> getAllVideoChannelLiked(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<VideoResponse>>builder()
+                .result(videoService.getAllVideoChannelLiked(idChannel, page, size))
+                .build();
+    }
+
+    @GetMapping("/all/by/channel/name_unique/{nameUniqueChannel}/pageable/{page}/{size}")
+    ApiResponse<Page<VideoResponse>> getAllByChannelNameUnique(@PathVariable String nameUniqueChannel, @PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<VideoResponse>>builder()
+                .result(videoService.getAllByChannelNameUnique(nameUniqueChannel, page, size))
+                .build();
+    }
+
+    @GetMapping("/pageable/{page}/{size}")
+    ApiResponse<Page<VideoResponse>> getAllVideo(@PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<VideoResponse>>builder()
+                .result(videoService.getAllVideo(page, size))
+                .build();
+    }
+
+    @GetMapping("/all/by/category/{idCategory}/pageable/{page}/{size}")
+    ApiResponse<Page<VideoResponse>> getAllVideoByCategory(@PathVariable Integer idCategory, @PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<VideoResponse>>builder()
+                .result(videoService.getAllVideoByCategory(idCategory, page, size))
                 .build();
     }
 
