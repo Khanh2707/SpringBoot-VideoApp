@@ -34,10 +34,6 @@ public class SecurityConfig {
             "/api/verify_email"
     };
 
-    private final String[] WEBSOCKET_ENDPOINTS = {
-            "/ws/**"
-    };
-
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
@@ -47,6 +43,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
                 .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                 .requestMatchers(HttpMethod.PUT, PUBLIC_ENDPOINTS).permitAll()
+                .requestMatchers("/ws/**").permitAll()
                 .anyRequest()
                 .authenticated());
 
