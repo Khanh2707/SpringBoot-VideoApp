@@ -1,12 +1,15 @@
 package com.phuckhanh.VideoApp.service;
 
 import com.phuckhanh.VideoApp.dto.request.HistoryLikeVideoCreationRequest;
+import com.phuckhanh.VideoApp.dto.request.HistoryNotificationVideoUpdateRequest;
 import com.phuckhanh.VideoApp.dto.request.HistoryWatchVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
+import com.phuckhanh.VideoApp.dto.response.HistoryNotificationVideoResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.entity.*;
 import com.phuckhanh.VideoApp.exception.AppException;
 import com.phuckhanh.VideoApp.exception.ErrorCode;
+import com.phuckhanh.VideoApp.mapper.HistoryNotificationVideoMapper;
 import com.phuckhanh.VideoApp.mapper.VideoMapper;
 import com.phuckhanh.VideoApp.repository.*;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,8 +30,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +48,8 @@ public class VideoService {
     ChannelSubChannelRepository channelSubChannelRepository;
     HistoryLikeVideoRepository historyLikeVideoRepository;
     HistoryWatchVideoRepository historyWatchVideoRepository;
+    private final CheckHistoryNotificationVideoRepository checkHistoryNotificationVideoRepository;
+    private final HistoryNotificationVideoMapper historyNotificationVideoMapper;
 
     public void downloadVideo(Integer idVideo, HttpServletResponse response) throws IOException {
         Video video = videoRepository.findById(idVideo).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
@@ -82,6 +87,34 @@ public class VideoService {
         }
     }
 
+    public long countHistoryNotificationVideoFromTimeToTime(Integer idChannel) {
+        CheckHistoryNotificationVideo checkHistoryNotificationVideo = checkHistoryNotificationVideoRepository.findByChannel_IdChannel(idChannel).orElse(null);
+
+        if (checkHistoryNotificationVideo == null) {
+            Channel channel = channelRepository.findById(idChannel)
+                    .orElseThrow(() -> new AppException(ErrorCode.CHANNEL_NOT_FOUND));
+
+            checkHistoryNotificationVideo = new CheckHistoryNotificationVideo();
+            checkHistoryNotificationVideo.setDateTimeCheck(LocalDateTime.now());
+            checkHistoryNotificationVideo.setChannel(channel);
+
+            checkHistoryNotificationVideoRepository.save(checkHistoryNotificationVideo);
+
+            Pageable pageable = PageRequest.of(0, 1);
+
+            return historyNotificationVideoRepository.findAllByChannel_IdChannelOrderByNotificationVideoDesc(idChannel, pageable).getTotalElements();
+        } else {
+            LocalDateTime dateTimeCheck = checkHistoryNotificationVideo.getDateTimeCheck();
+            LocalDateTime now = LocalDateTime.now();
+
+            List<HistoryNotificationVideo> historyNotificationVideos = historyNotificationVideoRepository.findAllByChannelIdAndTimeBetween(
+                    idChannel, dateTimeCheck, now
+            );
+
+            return historyNotificationVideos.size();
+        }
+    }
+
     public long countChannelLikeVideo(Integer idVideo) {
         return historyLikeVideoRepository.countChannelLikeVideo(idVideo);
     }
@@ -100,11 +133,10 @@ public class VideoService {
         return videoMapper.toVideoResponse(video);
     }
 
-    public List<VideoResponse> getAllNotificationCreateVideo(Integer idChannel) {
-        return historyNotificationVideoRepository.findAllByChannel_IdChannel(idChannel).stream()
-                .map(historyNotificationVideo -> videoMapper.toVideoResponse(historyNotificationVideo.getNotificationVideo().getVideo()))
-                .sorted(Comparator.comparing(VideoResponse::getDateTimeCreate).reversed())
-                .toList();
+    public Page<HistoryNotificationVideoResponse> getAllNotificationCreateVideo(Integer idChannel, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return historyNotificationVideoRepository.findAllByChannel_IdChannelOrderByNotificationVideoDesc(idChannel, pageable)
+                .map(historyNotificationVideoMapper::toHistoryNotificationVideoResponse);
     }
 
     public Page<VideoResponse> getAllVideoChannelWatched(Integer idChannel, Integer page, Integer size) {
@@ -203,6 +235,33 @@ public class VideoService {
                 });
 
         return videoMapper.toVideoResponse(video);
+    }
+
+    public void updateCheckHistoryNotificationVideo(Integer idChannel) {
+        Optional<CheckHistoryNotificationVideo> optionalCheckHistory = checkHistoryNotificationVideoRepository.findByChannel_IdChannel(idChannel);
+
+        CheckHistoryNotificationVideo checkHistoryNotificationVideo;
+
+        if (optionalCheckHistory.isPresent()) {
+            checkHistoryNotificationVideo = optionalCheckHistory.get();
+        } else {
+            checkHistoryNotificationVideo = new CheckHistoryNotificationVideo();
+            Channel channel = channelRepository.findById(idChannel).orElseThrow(() -> new AppException(ErrorCode.CHANNEL_NOT_FOUND));
+            checkHistoryNotificationVideo.setChannel(channel);
+        }
+
+        checkHistoryNotificationVideo.setDateTimeCheck(LocalDateTime.now());
+
+        checkHistoryNotificationVideoRepository.save(checkHistoryNotificationVideo);
+    }
+
+    public HistoryNotificationVideoResponse updateIsCheckHistoryNotificationVideo(Integer idChannel, Integer idNotificationVideo, HistoryNotificationVideoUpdateRequest request) {
+        HistoryNotificationVideoKey historyNotificationVideoKey = new HistoryNotificationVideoKey(idChannel, idNotificationVideo);
+        HistoryNotificationVideo historyNotificationVideo = historyNotificationVideoRepository.findByIdHistoryNotificationVideoKey(historyNotificationVideoKey).orElseThrow(() -> new AppException(ErrorCode.HISTORY_NOTIFICATION_VIDEO_NOT_FOUND));
+
+        historyNotificationVideoMapper.updateHistoryNotificationVideoIsCheck(historyNotificationVideo, request);
+
+        return historyNotificationVideoMapper.toHistoryNotificationVideoResponse(historyNotificationVideoRepository.save(historyNotificationVideo));
     }
 
     public void deleteVideo(Integer idVideo) throws IOException {

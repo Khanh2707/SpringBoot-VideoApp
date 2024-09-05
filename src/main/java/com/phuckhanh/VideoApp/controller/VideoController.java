@@ -1,9 +1,11 @@
 package com.phuckhanh.VideoApp.controller;
 
 import com.phuckhanh.VideoApp.dto.request.HistoryLikeVideoCreationRequest;
+import com.phuckhanh.VideoApp.dto.request.HistoryNotificationVideoUpdateRequest;
 import com.phuckhanh.VideoApp.dto.request.HistoryWatchVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.response.ApiResponse;
+import com.phuckhanh.VideoApp.dto.response.HistoryNotificationVideoResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.service.VideoService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +30,13 @@ public class VideoController {
     @GetMapping("/download/{idVideo}")
     public void downloadVideo(@PathVariable("idVideo") Integer idVideo, HttpServletResponse response) throws IOException {
         videoService.downloadVideo(idVideo, response);
+    }
+
+    @GetMapping("/count/history_notification/from_time_to_time/{idChannel}")
+    public ApiResponse<Long> countHistoryNotificationVideoFromTimeToTime(@PathVariable Integer idChannel) {
+        return ApiResponse.<Long>builder()
+                .result(videoService.countHistoryNotificationVideoFromTimeToTime(idChannel))
+                .build();
     }
 
     @GetMapping("/count/like/{idVideo}")
@@ -58,10 +67,10 @@ public class VideoController {
                 .build();
     }
 
-    @GetMapping("/all/notification/video/{idChannel}")
-    ApiResponse<List<VideoResponse>> getAllNotificationCreateVideo(@PathVariable Integer idChannel) {
-        return ApiResponse.<List<VideoResponse>>builder()
-                .result(videoService.getAllNotificationCreateVideo(idChannel))
+    @GetMapping("/all/notification/video/{idChannel}/pageable/{page}/{size}")
+    ApiResponse<Page<HistoryNotificationVideoResponse>> getAllNotificationCreateVideo(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<HistoryNotificationVideoResponse>>builder()
+                .result(videoService.getAllNotificationCreateVideo(idChannel, page, size))
                 .build();
     }
 
@@ -118,10 +127,25 @@ public class VideoController {
                 .build();
     }
 
+    @PostMapping("/check/history/notification/video/{idChannel}")
+    ApiResponse<String> updateCheckHistoryNotificationVideo(@PathVariable Integer idChannel) {
+        videoService.updateCheckHistoryNotificationVideo(idChannel);
+        return ApiResponse.<String>builder()
+                .result("Update check notification video success!")
+                .build();
+    }
+
     @PostMapping("")
     ApiResponse<VideoResponse> createVideo(@ModelAttribute VideoCreationRequest request) throws IOException {
         return ApiResponse.<VideoResponse>builder()
                 .result(videoService.createVideo(request))
+                .build();
+    }
+
+    @PutMapping("/is_check/history/notification/video/{idChannel}/{idNotificationVideo}")
+    ApiResponse<HistoryNotificationVideoResponse> updateIsCheckHistoryNotificationVideo(@PathVariable Integer idChannel, @PathVariable Integer idNotificationVideo, @RequestBody HistoryNotificationVideoUpdateRequest request) {
+        return ApiResponse.<HistoryNotificationVideoResponse>builder()
+                .result(videoService.updateIsCheckHistoryNotificationVideo(idChannel, idNotificationVideo, request))
                 .build();
     }
 
