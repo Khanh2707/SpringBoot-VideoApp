@@ -142,6 +142,13 @@ public class VideoController {
                 .build();
     }
 
+    @PutMapping("view/{idVideo}")
+    ApiResponse<VideoResponse> updateViewVideo(@PathVariable Integer idVideo) {
+        return ApiResponse.<VideoResponse>builder()
+                .result(videoService.updateViewVideo(idVideo))
+                .build();
+    }
+
     @PutMapping("/is_check/history/notification/video/{idChannel}/{idNotificationVideo}")
     ApiResponse<HistoryNotificationVideoResponse> updateIsCheckHistoryNotificationVideo(@PathVariable Integer idChannel, @PathVariable Integer idNotificationVideo, @RequestBody HistoryNotificationVideoUpdateRequest request) {
         return ApiResponse.<HistoryNotificationVideoResponse>builder()

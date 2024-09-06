@@ -59,22 +59,18 @@ public class VideoService {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
 
-        // Get the media type of the file
         String contentType = connection.getContentType();
         if (contentType == null) {
-            // Use the default media type
             contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
         }
 
         response.setContentType(contentType);
 
-        // Set Content-Disposition header
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
                 .filename("video.mp4", StandardCharsets.UTF_8)
                 .build()
                 .toString());
 
-        // Copy data from the URL connection to the response output stream
         try (InputStream inputStream = connection.getInputStream();
              OutputStream outputStream = response.getOutputStream()) {
             byte[] buffer = new byte[1024];
@@ -253,6 +249,16 @@ public class VideoService {
         checkHistoryNotificationVideo.setDateTimeCheck(LocalDateTime.now());
 
         checkHistoryNotificationVideoRepository.save(checkHistoryNotificationVideo);
+    }
+
+    public VideoResponse updateViewVideo(Integer idVideo) {
+        Video video = videoRepository.findById(idVideo).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
+
+        video.setView(video.getView() + 1);
+
+        videoRepository.save(video);
+
+        return videoMapper.toVideoResponse(video);
     }
 
     public HistoryNotificationVideoResponse updateIsCheckHistoryNotificationVideo(Integer idChannel, Integer idNotificationVideo, HistoryNotificationVideoUpdateRequest request) {
