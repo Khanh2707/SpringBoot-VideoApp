@@ -1,4 +1,4 @@
-package com.phuckhanh.VideoApp.dto.request;
+package com.phuckhanh.VideoApp.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HistoryNotificationVideoUpdateRequest {
+public class HistoryNotificationCommentInCommentResponse {
     Boolean isCheck;
+    CommentInCommentResponse commentInComment;
 }

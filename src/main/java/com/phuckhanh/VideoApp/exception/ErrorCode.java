@@ -23,6 +23,8 @@ public enum ErrorCode {
     HISTORY_WATCH_VIDEO_NOT_FOUND(1014, "History watch video not found", HttpStatus.NOT_FOUND),
     CHANNEL_NAME_UNIQUE_EXISTED(1015, "Channel name unique already exists", HttpStatus.BAD_REQUEST),
     HISTORY_NOTIFICATION_VIDEO_NOT_FOUND(1016, "History notification video not found", HttpStatus.NOT_FOUND),
+    COMMENT_VIDEO_NOT_FOUND(1017, "Comment video not found", HttpStatus.NOT_FOUND),
+    COMMENT_COMMENT_NOT_FOUND(1018, "Comment comment not found", HttpStatus.NOT_FOUND),
     ;
 
     private int code;

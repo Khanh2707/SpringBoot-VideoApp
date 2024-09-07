@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,6 +29,9 @@ public class Video {
 
     @OneToOne(mappedBy = "video", cascade = CascadeType.ALL)
     NotificationVideo notificationVideo;
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
+    List<CommentVideo> commentVideos;
 
     @ManyToOne
     @JoinColumn(name = "id_category_video")

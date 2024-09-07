@@ -34,4 +34,16 @@ public class Channel {
 
     @OneToMany(mappedBy = "channel")
     List<HistoryNotificationVideo> historyNotificationVideos;
+
+    @OneToMany(mappedBy = "channel")
+    List<CommentVideo> commentVideos;
+
+    @OneToMany(mappedBy = "channel")
+    List<CommentInComment> commentInComments;
+
+    @OneToMany(mappedBy = "channel")
+    List<HistoryNotificationCommentVideo> historyNotificationCommentVideos;
+
+    @OneToMany(mappedBy = "channel")
+    List<HistoryNotificationCommentInComment> historyNotificationCommentInComments;
 }

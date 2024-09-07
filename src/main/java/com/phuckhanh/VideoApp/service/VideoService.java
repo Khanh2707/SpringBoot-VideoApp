@@ -48,8 +48,8 @@ public class VideoService {
     ChannelSubChannelRepository channelSubChannelRepository;
     HistoryLikeVideoRepository historyLikeVideoRepository;
     HistoryWatchVideoRepository historyWatchVideoRepository;
-    private final CheckHistoryNotificationVideoRepository checkHistoryNotificationVideoRepository;
-    private final HistoryNotificationVideoMapper historyNotificationVideoMapper;
+    CheckHistoryNotificationVideoRepository checkHistoryNotificationVideoRepository;
+    HistoryNotificationVideoMapper historyNotificationVideoMapper;
 
     public void downloadVideo(Integer idVideo, HttpServletResponse response) throws IOException {
         Video video = videoRepository.findById(idVideo).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));

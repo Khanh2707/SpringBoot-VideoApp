@@ -8,6 +8,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HistoryNotificationVideoUpdateRequest {
-    Boolean isCheck;
+public class CommentInCommentCreationRequest {
+    String content;
+    Integer idChannel;
+    Integer idCommentVideo;
 }
