@@ -25,6 +25,8 @@ public enum ErrorCode {
     HISTORY_NOTIFICATION_VIDEO_NOT_FOUND(1016, "History notification video not found", HttpStatus.NOT_FOUND),
     COMMENT_VIDEO_NOT_FOUND(1017, "Comment video not found", HttpStatus.NOT_FOUND),
     COMMENT_COMMENT_NOT_FOUND(1018, "Comment comment not found", HttpStatus.NOT_FOUND),
+    HISTORY_NOTIFICATION_COMMENT_VIDEO_NOT_FOUND(1019, "History notification comment video not found", HttpStatus.NOT_FOUND),
+    HISTORY_NOTIFICATION_COMMENT_COMMENT_NOT_FOUND(1020, "History notification comment comment not found", HttpStatus.NOT_FOUND),
     ;
 
     private int code;

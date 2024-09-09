@@ -2,13 +2,18 @@ package com.phuckhanh.VideoApp.controller;
 
 import com.phuckhanh.VideoApp.dto.request.CommentVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.CommentVideoUpdateContentRequest;
+import com.phuckhanh.VideoApp.dto.request.HistoryNotificationCommentVideoUpdateRequest;
+import com.phuckhanh.VideoApp.dto.request.HistoryNotificationVideoUpdateRequest;
 import com.phuckhanh.VideoApp.dto.response.ApiResponse;
 import com.phuckhanh.VideoApp.dto.response.CommentVideoResponse;
+import com.phuckhanh.VideoApp.dto.response.HistoryNotificationCommentVideoResponse;
+import com.phuckhanh.VideoApp.dto.response.HistoryNotificationVideoResponse;
 import com.phuckhanh.VideoApp.service.CommentVideoService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +33,20 @@ public class CommentVideoController {
                 .build();
     }
 
+    @GetMapping("/count/history_notification_comment_video/from_time_to_time/{idChannel}")
+    public ApiResponse<Long> countHistoryNotificationCommentVideoFromTimeToTime(@PathVariable Integer idChannel) {
+        return ApiResponse.<Long>builder()
+                .result(commentVideoService.countHistoryNotificationCommentVideoFromTimeToTime(idChannel))
+                .build();
+    }
+
+    @GetMapping("/all/notification/comment_video/{idChannel}/pageable/{page}/{size}")
+    ApiResponse<Page<HistoryNotificationCommentVideoResponse>> getAllNotificationCommentVideo(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<HistoryNotificationCommentVideoResponse>>builder()
+                .result(commentVideoService.getAllNotificationCommentVideo(idChannel, page, size))
+                .build();
+    }
+
     @GetMapping("/by/video/{idVideo}")
     public ApiResponse<List<CommentVideoResponse>> getAllComment(@PathVariable Integer idVideo) {
         return ApiResponse.<List<CommentVideoResponse>>builder()
@@ -39,6 +58,21 @@ public class CommentVideoController {
     public ApiResponse<CommentVideoResponse> createCommentVideo(@RequestBody CommentVideoCreationRequest request) {
         return ApiResponse.<CommentVideoResponse>builder()
                 .result(commentVideoService.createCommentVideo(request))
+                .build();
+    }
+
+    @PostMapping("/check/history/notification/comment_video/{idChannel}")
+    ApiResponse<String> updateCheckHistoryNotificationCommentVideo(@PathVariable Integer idChannel) {
+        commentVideoService.updateCheckHistoryNotificationCommentVideo(idChannel);
+        return ApiResponse.<String>builder()
+                .result("Update check notification comment video success!")
+                .build();
+    }
+
+    @PutMapping("/is_check/history/notification/comment_video/{idChannel}/{idNotificationCommentVideo}")
+    ApiResponse<HistoryNotificationCommentVideoResponse> updateIsCheckHistoryNotificationCommentVideo(@PathVariable Integer idChannel, @PathVariable Integer idNotificationCommentVideo, @RequestBody HistoryNotificationCommentVideoUpdateRequest request) {
+        return ApiResponse.<HistoryNotificationCommentVideoResponse>builder()
+                .result(commentVideoService.updateIsCheckHistoryNotificationCommentVideo(idChannel, idNotificationCommentVideo, request))
                 .build();
     }
 

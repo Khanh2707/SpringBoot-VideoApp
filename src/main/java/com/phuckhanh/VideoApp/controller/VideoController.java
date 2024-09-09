@@ -4,9 +4,8 @@ import com.phuckhanh.VideoApp.dto.request.HistoryLikeVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.HistoryNotificationVideoUpdateRequest;
 import com.phuckhanh.VideoApp.dto.request.HistoryWatchVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
-import com.phuckhanh.VideoApp.dto.response.ApiResponse;
-import com.phuckhanh.VideoApp.dto.response.HistoryNotificationVideoResponse;
-import com.phuckhanh.VideoApp.dto.response.VideoResponse;
+import com.phuckhanh.VideoApp.dto.response.*;
+import com.phuckhanh.VideoApp.entity.HistoryNotificationCommentInComment;
 import com.phuckhanh.VideoApp.service.VideoService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -31,7 +30,7 @@ public class VideoController {
         videoService.downloadVideo(idVideo, response);
     }
 
-    @GetMapping("/count/history_notification/from_time_to_time/{idChannel}")
+    @GetMapping("/count/history_notification_video/from_time_to_time/{idChannel}")
     public ApiResponse<Long> countHistoryNotificationVideoFromTimeToTime(@PathVariable Integer idChannel) {
         return ApiResponse.<Long>builder()
                 .result(videoService.countHistoryNotificationVideoFromTimeToTime(idChannel))
@@ -65,6 +64,7 @@ public class VideoController {
                 .result(videoService.getById(id))
                 .build();
     }
+
 
     @GetMapping("/all/notification/video/{idChannel}/pageable/{page}/{size}")
     ApiResponse<Page<HistoryNotificationVideoResponse>> getAllNotificationCreateVideo(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {

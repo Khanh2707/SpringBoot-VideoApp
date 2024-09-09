@@ -2,23 +2,27 @@ package com.phuckhanh.VideoApp.service;
 
 import com.phuckhanh.VideoApp.dto.request.CommentInCommentCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.CommentInCommentUpdateContentRequest;
+import com.phuckhanh.VideoApp.dto.request.HistoryNotificationCommentInCommentUpdateRequest;
 import com.phuckhanh.VideoApp.dto.response.CommentInCommentResponse;
+import com.phuckhanh.VideoApp.dto.response.HistoryNotificationCommentInCommentResponse;
 import com.phuckhanh.VideoApp.entity.*;
 import com.phuckhanh.VideoApp.exception.AppException;
 import com.phuckhanh.VideoApp.exception.ErrorCode;
 import com.phuckhanh.VideoApp.mapper.CommentInCommentMapper;
-import com.phuckhanh.VideoApp.repository.ChannelRepository;
-import com.phuckhanh.VideoApp.repository.CommentInCommentRepository;
-import com.phuckhanh.VideoApp.repository.CommentVideoRepository;
-import com.phuckhanh.VideoApp.repository.HistoryNotificationCommentInCommentRepository;
+import com.phuckhanh.VideoApp.mapper.HistoryNotificationCommentInCommentMapper;
+import com.phuckhanh.VideoApp.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +34,45 @@ public class CommentInCommentService {
     CommentVideoRepository commentVideoRepository;
     CommentInCommentRepository commentInCommentRepository;
     HistoryNotificationCommentInCommentRepository historyNotificationCommentInCommentRepository;
+    HistoryNotificationCommentInCommentMapper historyNotificationCommentInCommentMapper;
+    CheckHistoryNotificationCommentInCommentRepository checkHistoryNotificationCommentInCommentRepository;
+
+    public long countHistoryNotificationCommentInCommentFromTimeToTime(Integer idChannel) {
+        CheckHistoryNotificationCommentInComment checkHistoryNotificationCommentInComment = checkHistoryNotificationCommentInCommentRepository.findByChannel_IdChannel(idChannel).orElse(null);
+
+        if (checkHistoryNotificationCommentInComment == null) {
+            Channel channel = channelRepository.findById(idChannel)
+                    .orElseThrow(() -> new AppException(ErrorCode.CHANNEL_NOT_FOUND));
+
+            checkHistoryNotificationCommentInComment = new CheckHistoryNotificationCommentInComment();
+            checkHistoryNotificationCommentInComment.setDateTimeCheck(LocalDateTime.now());
+            checkHistoryNotificationCommentInComment.setChannel(channel);
+
+            checkHistoryNotificationCommentInCommentRepository.save(checkHistoryNotificationCommentInComment);
+
+            Pageable pageable = PageRequest.of(0, 1);
+
+            return historyNotificationCommentInCommentRepository.findAllByChannel_IdChannelOrderByCommentInCommentDesc(idChannel, pageable).getTotalElements();
+        } else {
+            LocalDateTime dateTimeCheck = checkHistoryNotificationCommentInComment.getDateTimeCheck();
+            LocalDateTime now = LocalDateTime.now();
+
+            List<HistoryNotificationCommentInComment> historyNotificationCommentInComments = historyNotificationCommentInCommentRepository.findAllByChannelIdAndTimeBetween(
+                    idChannel, dateTimeCheck, now
+            );
+
+            return historyNotificationCommentInComments.size();
+        }
+    }
 
     public long countCommentByCommentVideo(Integer idCommentVideo) {
         return commentInCommentRepository.countCommentByCommentVideo(idCommentVideo);
+    }
+
+    public Page<HistoryNotificationCommentInCommentResponse> getAllNotificationCommentInComment(Integer idChannel, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return historyNotificationCommentInCommentRepository.findAllByChannel_IdChannelOrderByCommentInCommentDesc(idChannel, pageable)
+                .map(historyNotificationCommentInCommentMapper::toHistoryNotificationCommentInCommentResponse);
     }
 
     public List<CommentInCommentResponse> getAllCommentComment(Integer idCommentVideo) {
@@ -62,6 +102,33 @@ public class CommentInCommentService {
         historyNotificationCommentInCommentRepository.save(historyNotificationCommentInComment);
 
         return commentInCommentMapper.toCommentInCommentResponse(commentInComment);
+    }
+
+    public void updateCheckHistoryNotificationCommentInComment(Integer idChannel) {
+        Optional<CheckHistoryNotificationCommentInComment> optionalCheckHistory = checkHistoryNotificationCommentInCommentRepository.findByChannel_IdChannel(idChannel);
+
+        CheckHistoryNotificationCommentInComment checkHistoryNotificationCommentInComment;
+
+        if (optionalCheckHistory.isPresent()) {
+            checkHistoryNotificationCommentInComment = optionalCheckHistory.get();
+        } else {
+            checkHistoryNotificationCommentInComment = new CheckHistoryNotificationCommentInComment();
+            Channel channel = channelRepository.findById(idChannel).orElseThrow(() -> new AppException(ErrorCode.CHANNEL_NOT_FOUND));
+            checkHistoryNotificationCommentInComment.setChannel(channel);
+        }
+
+        checkHistoryNotificationCommentInComment.setDateTimeCheck(LocalDateTime.now());
+
+        checkHistoryNotificationCommentInCommentRepository.save(checkHistoryNotificationCommentInComment);
+    }
+
+    public HistoryNotificationCommentInCommentResponse updateIsCheckHistoryNotificationCommentInComment(Integer idChannel, Integer idNotificationCommentInComment, HistoryNotificationCommentInCommentUpdateRequest request) {
+        HistoryNotificationCommentInCommentKey historyNotificationCommentInCommentKey = new HistoryNotificationCommentInCommentKey(idNotificationCommentInComment, idChannel);
+        HistoryNotificationCommentInComment historyNotificationCommentInComment = historyNotificationCommentInCommentRepository.findByIdHistoryNotificationCommentInCommentKey(historyNotificationCommentInCommentKey).orElseThrow(() -> new AppException(ErrorCode.HISTORY_NOTIFICATION_COMMENT_COMMENT_NOT_FOUND));
+
+        historyNotificationCommentInCommentMapper.updateHistoryNotificationCommentInCommentIsCheck(historyNotificationCommentInComment, request);
+
+        return historyNotificationCommentInCommentMapper.toHistoryNotificationCommentInCommentResponse(historyNotificationCommentInCommentRepository.save(historyNotificationCommentInComment));
     }
 
     public CommentInCommentResponse updateCommentCommentContent(Integer idCommentInComment, CommentInCommentUpdateContentRequest request) {

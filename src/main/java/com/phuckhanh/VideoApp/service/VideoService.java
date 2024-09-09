@@ -9,6 +9,8 @@ import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.entity.*;
 import com.phuckhanh.VideoApp.exception.AppException;
 import com.phuckhanh.VideoApp.exception.ErrorCode;
+import com.phuckhanh.VideoApp.mapper.HistoryNotificationCommentInCommentMapper;
+import com.phuckhanh.VideoApp.mapper.HistoryNotificationCommentVideoMapper;
 import com.phuckhanh.VideoApp.mapper.HistoryNotificationVideoMapper;
 import com.phuckhanh.VideoApp.mapper.VideoMapper;
 import com.phuckhanh.VideoApp.repository.*;
@@ -128,6 +130,7 @@ public class VideoService {
 
         return videoMapper.toVideoResponse(video);
     }
+
 
     public Page<HistoryNotificationVideoResponse> getAllNotificationCreateVideo(Integer idChannel, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
