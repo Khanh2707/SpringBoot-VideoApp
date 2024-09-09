@@ -15,4 +15,6 @@ public interface CommentVideoRepository extends JpaRepository<CommentVideo, Inte
     long countCommentVideosByVideo(Integer idVideo);
 
     List<CommentVideo> findAllByVideo_IdVideoOrderByIdCommentVideoDesc(Integer idVideo);
+
+    List<CommentVideo> findAllByVideo_IdVideoOrderByIdCommentVideoAsc(Integer idVideo);
 }

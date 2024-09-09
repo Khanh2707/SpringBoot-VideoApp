@@ -75,8 +75,16 @@ public class CommentVideoService {
                 .map(historyNotificationCommentVideoMapper::toHistoryNotificationCommentVideoResponse);
     }
 
-    public List<CommentVideoResponse> getAllComment(Integer idVideo) {
-        return commentVideoRepository.findAllByVideo_IdVideoOrderByIdCommentVideoDesc(idVideo).stream()
+    public List<CommentVideoResponse> getAllComment(Integer idVideo, String option) {
+        List<CommentVideo> commentVideos;
+
+        if ("asc".equalsIgnoreCase(option)) {
+            commentVideos = commentVideoRepository.findAllByVideo_IdVideoOrderByIdCommentVideoAsc(idVideo);
+        } else {
+            commentVideos = commentVideoRepository.findAllByVideo_IdVideoOrderByIdCommentVideoDesc(idVideo);
+        }
+
+        return commentVideos.stream()
                 .map(commentVideoMapper::toCommentVideoResponse)
                 .toList();
     }

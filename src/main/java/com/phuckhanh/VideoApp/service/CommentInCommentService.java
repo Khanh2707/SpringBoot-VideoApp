@@ -75,8 +75,16 @@ public class CommentInCommentService {
                 .map(historyNotificationCommentInCommentMapper::toHistoryNotificationCommentInCommentResponse);
     }
 
-    public List<CommentInCommentResponse> getAllCommentComment(Integer idCommentVideo) {
-        return commentInCommentRepository.findAllByCommentVideo_IdCommentVideoOrderByIdCommentInCommentDesc(idCommentVideo).stream()
+    public List<CommentInCommentResponse> getAllCommentComment(Integer idCommentVideo, String option) {
+        List<CommentInComment> commentInComments;
+
+        if ("asc".equalsIgnoreCase(option)) {
+            commentInComments = commentInCommentRepository.findAllByCommentVideo_IdCommentVideoOrderByIdCommentInCommentAsc(idCommentVideo);
+        } else {
+            commentInComments = commentInCommentRepository.findAllByCommentVideo_IdCommentVideoOrderByIdCommentInCommentDesc(idCommentVideo);
+        }
+
+        return commentInComments.stream()
                 .map(commentInCommentMapper::toCommentInCommentResponse)
                 .toList();
     }

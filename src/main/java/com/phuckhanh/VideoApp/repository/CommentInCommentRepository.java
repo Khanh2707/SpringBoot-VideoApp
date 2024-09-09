@@ -14,4 +14,6 @@ public interface CommentInCommentRepository extends JpaRepository<CommentInComme
     long countCommentByCommentVideo(Integer idCommentVideo);
 
     List<CommentInComment> findAllByCommentVideo_IdCommentVideoOrderByIdCommentInCommentDesc(Integer idCommentVideo);
+
+    List<CommentInComment> findAllByCommentVideo_IdCommentVideoOrderByIdCommentInCommentAsc(Integer idCommentVideo);
 }

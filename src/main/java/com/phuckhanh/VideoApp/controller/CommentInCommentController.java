@@ -47,10 +47,10 @@ public class CommentInCommentController {
                 .build();
     }
 
-    @GetMapping("/by/comment_video/{idCommentVideo}")
-    public ApiResponse<List<CommentInCommentResponse>> getAllCommentComment(@PathVariable Integer idCommentVideo) {
+    @GetMapping("/by/comment_video/{idCommentVideo}/{option}")
+    public ApiResponse<List<CommentInCommentResponse>> getAllCommentComment(@PathVariable Integer idCommentVideo, @PathVariable String option) {
         return ApiResponse.<List<CommentInCommentResponse>>builder()
-                .result(commentInCommentService.getAllCommentComment(idCommentVideo))
+                .result(commentInCommentService.getAllCommentComment(idCommentVideo, option))
                 .build();
     }
 
