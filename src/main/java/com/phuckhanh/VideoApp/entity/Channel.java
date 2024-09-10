@@ -26,8 +26,11 @@ public class Channel {
     @JoinColumn(name = "id_account_channel", referencedColumnName = "idAccount")
     Account account;
 
-    @OneToOne(mappedBy = "channel", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "channel")
     CheckHistoryNotificationVideo checkHistoryNotificationVideo;
+
+    @OneToOne(mappedBy = "channel")
+    HistorySearch historySearch;
 
     @OneToMany(mappedBy = "channel")
     List<Video> videos;
