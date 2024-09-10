@@ -65,11 +65,17 @@ public class VideoController {
                 .build();
     }
 
-
     @GetMapping("/all/notification/video/{idChannel}/pageable/{page}/{size}")
     ApiResponse<Page<HistoryNotificationVideoResponse>> getAllNotificationCreateVideo(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<HistoryNotificationVideoResponse>>builder()
                 .result(videoService.getAllNotificationCreateVideo(idChannel, page, size))
+                .build();
+    }
+
+    @GetMapping("/search/all/video/channel/watched/{idChannel}/{keyword}/pageable/{page}/{size}")
+    ApiResponse<Page<VideoResponse>> searchWatchedVideosByChannelAndTitle(@PathVariable Integer idChannel, @PathVariable String keyword, @PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<VideoResponse>>builder()
+                .result(videoService.searchWatchedVideosByChannelAndTitle(idChannel, keyword, page, size))
                 .build();
     }
 
@@ -80,10 +86,24 @@ public class VideoController {
                 .build();
     }
 
+    @GetMapping("/search/all/video/channel/liked/{idChannel}/{keyword}/pageable/{page}/{size}")
+    ApiResponse<Page<VideoResponse>> searchLikedVideosByChannelAndTitle(@PathVariable Integer idChannel, @PathVariable String keyword, @PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<VideoResponse>>builder()
+                .result(videoService.searchLikedVideosByChannelAndTitle(idChannel, keyword, page, size))
+                .build();
+    }
+
     @GetMapping("/all/video/channel/liked/{idChannel}/pageable/{page}/{size}")
     ApiResponse<Page<VideoResponse>> getAllVideoChannelLiked(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
                 .result(videoService.getAllVideoChannelLiked(idChannel, page, size))
+                .build();
+    }
+
+    @GetMapping("/search/all/video/channel/{nameUnique}/{keyword}/pageable/{page}/{size}")
+    ApiResponse<Page<VideoResponse>> searchVideosByChannelAndTitle(@PathVariable String nameUnique, @PathVariable String keyword, @PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<VideoResponse>>builder()
+                .result(videoService.searchVideosByChannelAndTitle(nameUnique, keyword, page, size))
                 .build();
     }
 

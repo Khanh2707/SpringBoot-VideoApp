@@ -1,5 +1,6 @@
 package com.phuckhanh.VideoApp.repository;
 
+import com.phuckhanh.VideoApp.entity.HistoryWatchVideo;
 import com.phuckhanh.VideoApp.entity.Video;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +19,7 @@ public interface VideoRepository extends JpaRepository<Video, Integer> {
     Page<Video> findAllByChannel_NameUniqueOrderByDateTimeCreateDesc(String nameUniqueChannel, Pageable pageable);
 
     Page<Video> findAllByCategory_IdCategoryOrderByDateTimeCreateDesc(Integer idCategory, Pageable pageable);
+
+    @Query("SELECT v FROM Video v WHERE v.channel.nameUnique = :nameUnique AND LOWER(v.title) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Video> findByNameUniqueAndVideoTitleContainingIgnoreCase(@Param("nameUnique") String nameUnique, @Param("keyword") String keyword, Pageable pageable);
 }

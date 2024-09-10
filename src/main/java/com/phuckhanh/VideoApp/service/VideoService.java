@@ -131,11 +131,16 @@ public class VideoService {
         return videoMapper.toVideoResponse(video);
     }
 
-
     public Page<HistoryNotificationVideoResponse> getAllNotificationCreateVideo(Integer idChannel, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         return historyNotificationVideoRepository.findAllByChannel_IdChannelOrderByNotificationVideoDesc(idChannel, pageable)
                 .map(historyNotificationVideoMapper::toHistoryNotificationVideoResponse);
+    }
+
+    public Page<VideoResponse> searchWatchedVideosByChannelAndTitle(Integer idChannel, String keyword, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return historyWatchVideoRepository.findByChannelIdAndVideoTitleContainingIgnoreCase(idChannel, keyword, pageable)
+                .map(historyWatchVideo -> videoMapper.toVideoResponse(historyWatchVideo.getVideo()));
     }
 
     public Page<VideoResponse> getAllVideoChannelWatched(Integer idChannel, Integer page, Integer size) {
@@ -144,10 +149,22 @@ public class VideoService {
                 .map(historyWatchVideo -> videoMapper.toVideoResponse(historyWatchVideo.getVideo()));
     }
 
+    public Page<VideoResponse> searchLikedVideosByChannelAndTitle(Integer idChannel, String keyword, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return historyLikeVideoRepository.findByChannelIdAndVideoTitleContainingIgnoreCase(idChannel, keyword, pageable)
+                .map(historyLikeVideo -> videoMapper.toVideoResponse(historyLikeVideo.getVideo()));
+    }
+
     public Page<VideoResponse> getAllVideoChannelLiked(Integer idChannel, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         return historyLikeVideoRepository.findAllByChannel_IdChannelOrderByDateTimeLikeDesc(idChannel, pageable)
                 .map(historyLikeVideo -> videoMapper.toVideoResponse(historyLikeVideo.getVideo()));
+    }
+
+    public Page<VideoResponse> searchVideosByChannelAndTitle(String nameUnique, String keyword, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return videoRepository.findByNameUniqueAndVideoTitleContainingIgnoreCase(nameUnique, keyword, pageable)
+                .map(videoMapper::toVideoResponse);
     }
 
     public Page<VideoResponse> getAllByChannelNameUnique(String nameUniqueChannel, Integer page, Integer size) {
