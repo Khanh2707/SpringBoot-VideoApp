@@ -13,9 +13,7 @@ public interface VideoRepository extends JpaRepository<Video, Integer> {
     @Query("SELECT COUNT(v) FROM Video v WHERE v.channel.nameUnique = :nameUniqueChannel")
     long countByChannelNameUnique(@Param("nameUniqueChannel") String nameUniqueChannel);
 
-    Page<Video> findAllByOrderByDateTimeCreateDesc(Pageable pageable);
-
-    Page<Video> findAllByCategory_IdCategoryOrderByDateTimeCreateDesc(Integer idCategory, Pageable pageable);
+    Page<Video> findAllByCategory_IdCategory(Integer idCategory, Pageable pageable);
 
     Page<Video> findAllByChannel_NameUnique(String nameUniqueChannel, Pageable pageable);
 

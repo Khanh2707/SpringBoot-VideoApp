@@ -209,15 +209,19 @@ public class VideoService {
         }
     }
 
-    public Page<VideoResponse> getAllVideo(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return videoRepository.findAllByOrderByDateTimeCreateDesc(pageable)
+    public Page<VideoResponse> getAllVideo(String propertySort, String optionSort, Integer page, Integer size) {
+        Sort sort = Sort.by(Sort.Direction.fromString(optionSort), propertySort);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return videoRepository.findAll(pageable)
                 .map(videoMapper::toVideoResponse);
     }
 
-    public Page<VideoResponse> getAllVideoByCategory(Integer idCategory, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return videoRepository.findAllByCategory_IdCategoryOrderByDateTimeCreateDesc(idCategory, pageable)
+    public Page<VideoResponse> getAllVideoByCategory(Integer idCategory, String propertySort, String optionSort, Integer page, Integer size) {
+        Sort sort = Sort.by(Sort.Direction.fromString(optionSort), propertySort);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return videoRepository.findAllByCategory_IdCategory(idCategory, pageable)
                 .map(videoMapper::toVideoResponse);
     }
 

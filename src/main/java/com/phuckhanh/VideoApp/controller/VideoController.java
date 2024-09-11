@@ -111,17 +111,17 @@ public class VideoController {
                 .build();
     }
 
-    @GetMapping("/pageable/{page}/{size}")
-    public ApiResponse<Page<VideoResponse>> getAllVideo(@PathVariable Integer page, @PathVariable Integer size) {
+    @GetMapping("/{propertySort}/{optionSort}/pageable/{page}/{size}")
+    public ApiResponse<Page<VideoResponse>> getAllVideo(@PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
-                .result(videoService.getAllVideo(page, size))
+                .result(videoService.getAllVideo(propertySort, optionSort, page, size))
                 .build();
     }
 
-    @GetMapping("/all/by/category/{idCategory}/pageable/{page}/{size}")
-    public ApiResponse<Page<VideoResponse>> getAllVideoByCategory(@PathVariable Integer idCategory, @PathVariable Integer page, @PathVariable Integer size) {
+    @GetMapping("/all/by/category/{idCategory}/{propertySort}/{optionSort}/pageable/{page}/{size}")
+    public ApiResponse<Page<VideoResponse>> getAllVideoByCategory(@PathVariable Integer idCategory, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
-                .result(videoService.getAllVideoByCategory(idCategory, page, size))
+                .result(videoService.getAllVideoByCategory(idCategory, propertySort, optionSort, page, size))
                 .build();
     }
 
