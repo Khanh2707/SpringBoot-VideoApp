@@ -100,17 +100,17 @@ public class VideoController {
                 .build();
     }
 
-    @GetMapping("/search/all/video/channel/{nameUnique}/{keyword}/pageable/{page}/{size}")
-    ApiResponse<Page<VideoResponse>> searchVideosByChannelAndTitle(@PathVariable String nameUnique, @PathVariable String keyword, @PathVariable Integer page, @PathVariable Integer size) {
+    @GetMapping("/search/all/video/channel/{nameUnique}/{keyword}/{propertySort}/{optionSort}/pageable/{page}/{size}")
+    ApiResponse<Page<VideoResponse>> searchVideosByChannelAndTitle(@PathVariable String nameUnique, @PathVariable String keyword, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
-                .result(videoService.searchVideosByChannelAndTitle(nameUnique, keyword, page, size))
+                .result(videoService.searchVideosByChannelAndTitle(nameUnique, keyword, propertySort, optionSort, page, size))
                 .build();
     }
 
-    @GetMapping("/all/by/channel/name_unique/{nameUniqueChannel}/pageable/{page}/{size}")
-    ApiResponse<Page<VideoResponse>> getAllByChannelNameUnique(@PathVariable String nameUniqueChannel, @PathVariable Integer page, @PathVariable Integer size) {
+    @GetMapping("/all/by/channel/name_unique/{nameUniqueChannel}/{propertySort}/{optionSort}/pageable/{page}/{size}")
+    ApiResponse<Page<VideoResponse>> getAllByChannelNameUnique(@PathVariable String nameUniqueChannel, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
-                .result(videoService.getAllByChannelNameUnique(nameUniqueChannel, page, size))
+                .result(videoService.getAllByChannelNameUnique(nameUniqueChannel, propertySort, optionSort, page, size))
                 .build();
     }
 

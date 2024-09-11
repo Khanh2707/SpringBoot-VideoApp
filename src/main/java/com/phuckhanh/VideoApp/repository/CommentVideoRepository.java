@@ -1,11 +1,11 @@
 package com.phuckhanh.VideoApp.repository;
 
 import com.phuckhanh.VideoApp.entity.CommentVideo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface CommentVideoRepository extends JpaRepository<CommentVideo, Integer> {
@@ -14,7 +14,5 @@ public interface CommentVideoRepository extends JpaRepository<CommentVideo, Inte
             "FROM CommentVideo cv WHERE cv.video.idVideo = :idVideo")
     long countCommentVideosByVideo(Integer idVideo);
 
-    List<CommentVideo> findAllByVideo_IdVideoOrderByIdCommentVideoDesc(Integer idVideo);
-
-    List<CommentVideo> findAllByVideo_IdVideoOrderByIdCommentVideoAsc(Integer idVideo);
+    Page<CommentVideo> findAllByVideo_IdVideo(Integer idVideo, Pageable pageable);
 }

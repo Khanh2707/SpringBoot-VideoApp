@@ -3,11 +3,9 @@ package com.phuckhanh.VideoApp.controller;
 import com.phuckhanh.VideoApp.dto.request.CommentVideoCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.CommentVideoUpdateContentRequest;
 import com.phuckhanh.VideoApp.dto.request.HistoryNotificationCommentVideoUpdateRequest;
-import com.phuckhanh.VideoApp.dto.request.HistoryNotificationVideoUpdateRequest;
 import com.phuckhanh.VideoApp.dto.response.ApiResponse;
 import com.phuckhanh.VideoApp.dto.response.CommentVideoResponse;
 import com.phuckhanh.VideoApp.dto.response.HistoryNotificationCommentVideoResponse;
-import com.phuckhanh.VideoApp.dto.response.HistoryNotificationVideoResponse;
 import com.phuckhanh.VideoApp.service.CommentVideoService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +13,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/comment_videos")
@@ -47,10 +43,10 @@ public class CommentVideoController {
                 .build();
     }
 
-    @GetMapping("/by/video/{idVideo}/{option}")
-    public ApiResponse<List<CommentVideoResponse>> getAllComment(@PathVariable Integer idVideo, @PathVariable String option) {
-        return ApiResponse.<List<CommentVideoResponse>>builder()
-                .result(commentVideoService.getAllComment(idVideo, option))
+    @GetMapping("/by/video/{idVideo}/{propertySort}/{optionSort}/pageable/{page}/{size}")
+    public ApiResponse<Page<CommentVideoResponse>> getAllComment(@PathVariable Integer idVideo, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<CommentVideoResponse>>builder()
+                .result(commentVideoService.getAllComment(idVideo, propertySort, optionSort, page, size))
                 .build();
     }
 

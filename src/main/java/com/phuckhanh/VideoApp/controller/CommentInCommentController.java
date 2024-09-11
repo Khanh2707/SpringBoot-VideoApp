@@ -3,11 +3,9 @@ package com.phuckhanh.VideoApp.controller;
 import com.phuckhanh.VideoApp.dto.request.CommentInCommentCreationRequest;
 import com.phuckhanh.VideoApp.dto.request.CommentInCommentUpdateContentRequest;
 import com.phuckhanh.VideoApp.dto.request.HistoryNotificationCommentInCommentUpdateRequest;
-import com.phuckhanh.VideoApp.dto.request.HistoryNotificationCommentVideoUpdateRequest;
 import com.phuckhanh.VideoApp.dto.response.ApiResponse;
 import com.phuckhanh.VideoApp.dto.response.CommentInCommentResponse;
 import com.phuckhanh.VideoApp.dto.response.HistoryNotificationCommentInCommentResponse;
-import com.phuckhanh.VideoApp.dto.response.HistoryNotificationCommentVideoResponse;
 import com.phuckhanh.VideoApp.service.CommentInCommentService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +13,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/comment_comments")
@@ -47,10 +43,10 @@ public class CommentInCommentController {
                 .build();
     }
 
-    @GetMapping("/by/comment_video/{idCommentVideo}/{option}")
-    public ApiResponse<List<CommentInCommentResponse>> getAllCommentComment(@PathVariable Integer idCommentVideo, @PathVariable String option) {
-        return ApiResponse.<List<CommentInCommentResponse>>builder()
-                .result(commentInCommentService.getAllCommentComment(idCommentVideo, option))
+    @GetMapping("/by/comment_video/{idCommentVideo}/{propertySort}/{optionSort}/pageable/{page}/{size}")
+    public ApiResponse<Page<CommentInCommentResponse>> getAllCommentComment(@PathVariable Integer idCommentVideo, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
+        return ApiResponse.<Page<CommentInCommentResponse>>builder()
+                .result(commentInCommentService.getAllCommentInComment(idCommentVideo, propertySort, optionSort, page, size))
                 .build();
     }
 

@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -75,18 +76,12 @@ public class CommentVideoService {
                 .map(historyNotificationCommentVideoMapper::toHistoryNotificationCommentVideoResponse);
     }
 
-    public List<CommentVideoResponse> getAllComment(Integer idVideo, String option) {
-        List<CommentVideo> commentVideos;
+    public Page<CommentVideoResponse> getAllComment(Integer idVideo, String propertySort, String optionSort, Integer page, Integer size) {
+        Sort sort = Sort.by(Sort.Direction.fromString(optionSort), propertySort);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        if ("asc".equalsIgnoreCase(option)) {
-            commentVideos = commentVideoRepository.findAllByVideo_IdVideoOrderByIdCommentVideoAsc(idVideo);
-        } else {
-            commentVideos = commentVideoRepository.findAllByVideo_IdVideoOrderByIdCommentVideoDesc(idVideo);
-        }
-
-        return commentVideos.stream()
-                .map(commentVideoMapper::toCommentVideoResponse)
-                .toList();
+        return commentVideoRepository.findAllByVideo_IdVideo(idVideo, pageable)
+                .map(commentVideoMapper::toCommentVideoResponse);
     }
 
     public CommentVideoResponse createCommentVideo(CommentVideoCreationRequest request) {

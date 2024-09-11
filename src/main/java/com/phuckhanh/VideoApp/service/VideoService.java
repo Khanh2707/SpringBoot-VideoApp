@@ -9,8 +9,6 @@ import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.entity.*;
 import com.phuckhanh.VideoApp.exception.AppException;
 import com.phuckhanh.VideoApp.exception.ErrorCode;
-import com.phuckhanh.VideoApp.mapper.HistoryNotificationCommentInCommentMapper;
-import com.phuckhanh.VideoApp.mapper.HistoryNotificationCommentVideoMapper;
 import com.phuckhanh.VideoApp.mapper.HistoryNotificationVideoMapper;
 import com.phuckhanh.VideoApp.mapper.VideoMapper;
 import com.phuckhanh.VideoApp.repository.*;
@@ -22,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -161,16 +160,56 @@ public class VideoService {
                 .map(historyLikeVideo -> videoMapper.toVideoResponse(historyLikeVideo.getVideo()));
     }
 
-    public Page<VideoResponse> searchVideosByChannelAndTitle(String nameUnique, String keyword, Integer page, Integer size) {
+    public Page<VideoResponse> searchVideosByChannelAndTitle(String nameUniqueChannel, String keyword, String propertySort, String optionSort, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
-        return videoRepository.findByNameUniqueAndVideoTitleContainingIgnoreCase(nameUnique, keyword, pageable)
+
+        if ("amountLike".equals(propertySort)) {
+            if ("asc".equalsIgnoreCase(optionSort)) {
+                return videoRepository.findAllByChannelOrderByLikeCountAscAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable)
+                        .map(videoMapper::toVideoResponse);
+            } else {
+                return videoRepository.findAllByChannelOrderByLikeCountDescAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable)
+                        .map(videoMapper::toVideoResponse);
+            }
+        } else if ("amountComment".equals(propertySort)) {
+            if ("asc".equalsIgnoreCase(optionSort)) {
+                return videoRepository.findAllByChannelOrderByTotalCommentCountAscAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable)
+                        .map(videoMapper::toVideoResponse);
+            } else {
+                return videoRepository.findAllByChannelOrderByTotalCommentCountDescAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable)
+                        .map(videoMapper::toVideoResponse);
+            }
+        }
+
+        return videoRepository.findByNameUniqueAndVideoTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable)
                 .map(videoMapper::toVideoResponse);
     }
 
-    public Page<VideoResponse> getAllByChannelNameUnique(String nameUniqueChannel, Integer page, Integer size) {
+    public Page<VideoResponse> getAllByChannelNameUnique(String nameUniqueChannel, String propertySort, String optionSort, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
-        return videoRepository.findAllByChannel_NameUniqueOrderByDateTimeCreateDesc(nameUniqueChannel, pageable)
-                .map(videoMapper::toVideoResponse);
+
+        if ("amountLike".equals(propertySort)) {
+            if ("asc".equalsIgnoreCase(optionSort)) {
+                return videoRepository.findAllByChannelOrderByLikeCountAsc(nameUniqueChannel, pageable)
+                        .map(videoMapper::toVideoResponse);
+            } else {
+                return videoRepository.findAllByChannelOrderByLikeCountDesc(nameUniqueChannel, pageable)
+                        .map(videoMapper::toVideoResponse);
+            }
+        } else if ("amountComment".equals(propertySort)) {
+            if ("asc".equalsIgnoreCase(optionSort)) {
+                return videoRepository.findAllByChannelOrderByTotalCommentCountAsc(nameUniqueChannel, pageable)
+                        .map(videoMapper::toVideoResponse);
+            } else {
+                return videoRepository.findAllByChannelOrderByTotalCommentCountDesc(nameUniqueChannel, pageable)
+                        .map(videoMapper::toVideoResponse);
+            }
+        } else {
+            Sort sort = Sort.by(Sort.Direction.fromString(optionSort), propertySort);
+            pageable = PageRequest.of(page, size, sort);
+            return videoRepository.findAllByChannel_NameUnique(nameUniqueChannel, pageable)
+                    .map(videoMapper::toVideoResponse);
+        }
     }
 
     public Page<VideoResponse> getAllVideo(Integer page, Integer size) {
