@@ -1,9 +1,6 @@
 package com.phuckhanh.VideoApp.service;
 
-import com.phuckhanh.VideoApp.dto.request.HistoryLikeVideoCreationRequest;
-import com.phuckhanh.VideoApp.dto.request.HistoryNotificationVideoUpdateRequest;
-import com.phuckhanh.VideoApp.dto.request.HistoryWatchVideoCreationRequest;
-import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
+import com.phuckhanh.VideoApp.dto.request.*;
 import com.phuckhanh.VideoApp.dto.response.HistoryNotificationVideoResponse;
 import com.phuckhanh.VideoApp.dto.response.VideoResponse;
 import com.phuckhanh.VideoApp.entity.*;
@@ -290,6 +287,14 @@ public class VideoService {
                 });
 
         return videoMapper.toVideoResponse(video);
+    }
+
+    public VideoResponse updateVideo(Integer idVideo, VideoUpdateRequest request) {
+        Video video = videoRepository.findById(idVideo).orElseThrow(() -> new AppException(ErrorCode.VIDEO_NOT_FOUND));
+
+        videoMapper.updateVideo(video, request);
+
+        return videoMapper.toVideoResponse(videoRepository.save(video));
     }
 
     public void updateCheckHistoryNotificationVideo(Integer idChannel) {

@@ -1,9 +1,6 @@
 package com.phuckhanh.VideoApp.controller;
 
-import com.phuckhanh.VideoApp.dto.request.HistoryLikeVideoCreationRequest;
-import com.phuckhanh.VideoApp.dto.request.HistoryNotificationVideoUpdateRequest;
-import com.phuckhanh.VideoApp.dto.request.HistoryWatchVideoCreationRequest;
-import com.phuckhanh.VideoApp.dto.request.VideoCreationRequest;
+import com.phuckhanh.VideoApp.dto.request.*;
 import com.phuckhanh.VideoApp.dto.response.*;
 import com.phuckhanh.VideoApp.entity.HistoryNotificationCommentInComment;
 import com.phuckhanh.VideoApp.service.VideoService;
@@ -45,7 +42,7 @@ public class VideoController {
     }
 
     @GetMapping("/count/all/by/channel/name_unique/{nameUniqueChannel}")
-    ApiResponse<Long> countAllByChannelNameUnique(@PathVariable String nameUniqueChannel) {
+    public ApiResponse<Long> countAllByChannelNameUnique(@PathVariable String nameUniqueChannel) {
         return ApiResponse.<Long>builder()
                 .result(videoService.countAllByChannelNameUnique(nameUniqueChannel))
                 .build();
@@ -59,49 +56,49 @@ public class VideoController {
     }
 
     @GetMapping("/{id}")
-    ApiResponse<VideoResponse> getById(@PathVariable Integer id) {
+    public ApiResponse<VideoResponse> getById(@PathVariable Integer id) {
         return ApiResponse.<VideoResponse>builder()
                 .result(videoService.getById(id))
                 .build();
     }
 
     @GetMapping("/all/notification/video/{idChannel}/pageable/{page}/{size}")
-    ApiResponse<Page<HistoryNotificationVideoResponse>> getAllNotificationCreateVideo(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
+    public ApiResponse<Page<HistoryNotificationVideoResponse>> getAllNotificationCreateVideo(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<HistoryNotificationVideoResponse>>builder()
                 .result(videoService.getAllNotificationCreateVideo(idChannel, page, size))
                 .build();
     }
 
     @GetMapping("/search/all/video/channel/watched/{idChannel}/{keyword}/pageable/{page}/{size}")
-    ApiResponse<Page<VideoResponse>> searchWatchedVideosByChannelAndTitle(@PathVariable Integer idChannel, @PathVariable String keyword, @PathVariable Integer page, @PathVariable Integer size) {
+    public ApiResponse<Page<VideoResponse>> searchWatchedVideosByChannelAndTitle(@PathVariable Integer idChannel, @PathVariable String keyword, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
                 .result(videoService.searchWatchedVideosByChannelAndTitle(idChannel, keyword, page, size))
                 .build();
     }
 
     @GetMapping("/all/video/channel/watched/{idChannel}/pageable/{page}/{size}")
-    ApiResponse<Page<VideoResponse>> getAllVideoChannelWatched(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
+    public ApiResponse<Page<VideoResponse>> getAllVideoChannelWatched(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
                 .result(videoService.getAllVideoChannelWatched(idChannel, page, size))
                 .build();
     }
 
     @GetMapping("/search/all/video/channel/liked/{idChannel}/{keyword}/pageable/{page}/{size}")
-    ApiResponse<Page<VideoResponse>> searchLikedVideosByChannelAndTitle(@PathVariable Integer idChannel, @PathVariable String keyword, @PathVariable Integer page, @PathVariable Integer size) {
+    public ApiResponse<Page<VideoResponse>> searchLikedVideosByChannelAndTitle(@PathVariable Integer idChannel, @PathVariable String keyword, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
                 .result(videoService.searchLikedVideosByChannelAndTitle(idChannel, keyword, page, size))
                 .build();
     }
 
     @GetMapping("/all/video/channel/liked/{idChannel}/pageable/{page}/{size}")
-    ApiResponse<Page<VideoResponse>> getAllVideoChannelLiked(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
+    public ApiResponse<Page<VideoResponse>> getAllVideoChannelLiked(@PathVariable Integer idChannel, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
                 .result(videoService.getAllVideoChannelLiked(idChannel, page, size))
                 .build();
     }
 
     @GetMapping("/search/all/video/channel/{nameUnique}/{keyword}/{propertySort}/{optionSort}/pageable/{page}/{size}")
-    ApiResponse<Page<VideoResponse>> searchVideosByChannelAndTitle(@PathVariable String nameUnique, @PathVariable String keyword, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
+    public ApiResponse<Page<VideoResponse>> searchVideosByChannelAndTitle(@PathVariable String nameUnique, @PathVariable String keyword, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
                 .result(videoService.searchVideosByChannelAndTitle(nameUnique, keyword, propertySort, optionSort, page, size))
                 .build();
@@ -115,21 +112,21 @@ public class VideoController {
     }
 
     @GetMapping("/pageable/{page}/{size}")
-    ApiResponse<Page<VideoResponse>> getAllVideo(@PathVariable Integer page, @PathVariable Integer size) {
+    public ApiResponse<Page<VideoResponse>> getAllVideo(@PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
                 .result(videoService.getAllVideo(page, size))
                 .build();
     }
 
     @GetMapping("/all/by/category/{idCategory}/pageable/{page}/{size}")
-    ApiResponse<Page<VideoResponse>> getAllVideoByCategory(@PathVariable Integer idCategory, @PathVariable Integer page, @PathVariable Integer size) {
+    public ApiResponse<Page<VideoResponse>> getAllVideoByCategory(@PathVariable Integer idCategory, @PathVariable Integer page, @PathVariable Integer size) {
         return ApiResponse.<Page<VideoResponse>>builder()
                 .result(videoService.getAllVideoByCategory(idCategory, page, size))
                 .build();
     }
 
     @PostMapping("/watch")
-    ApiResponse<String> createHistoryWatchVideo(@RequestBody HistoryWatchVideoCreationRequest request) {
+    public ApiResponse<String> createHistoryWatchVideo(@RequestBody HistoryWatchVideoCreationRequest request) {
         videoService.createHistoryWatchVideo(request);
         String resultMessage = String.format("Channel %d watch Video %d success", request.getIdChannel(), request.getIdVideo());
         return ApiResponse.<String>builder()
@@ -138,7 +135,7 @@ public class VideoController {
     }
 
     @PostMapping("/like")
-    ApiResponse<String> createHistoryLikeVideo(@RequestBody HistoryLikeVideoCreationRequest request) {
+    public ApiResponse<String> createHistoryLikeVideo(@RequestBody HistoryLikeVideoCreationRequest request) {
         videoService.createHistoryLikeVideo(request);
         String resultMessage = String.format("Channel %d like Video %d success", request.getIdChannel(), request.getIdVideo());
         return ApiResponse.<String>builder()
@@ -147,7 +144,7 @@ public class VideoController {
     }
 
     @PostMapping("/check/history/notification/video/{idChannel}")
-    ApiResponse<String> updateCheckHistoryNotificationVideo(@PathVariable Integer idChannel) {
+    public ApiResponse<String> updateCheckHistoryNotificationVideo(@PathVariable Integer idChannel) {
         videoService.updateCheckHistoryNotificationVideo(idChannel);
         return ApiResponse.<String>builder()
                 .result("Update check notification video success!")
@@ -155,28 +152,35 @@ public class VideoController {
     }
 
     @PostMapping("")
-    ApiResponse<VideoResponse> createVideo(@ModelAttribute VideoCreationRequest request) throws IOException {
+    public ApiResponse<VideoResponse> createVideo(@ModelAttribute VideoCreationRequest request) throws IOException {
         return ApiResponse.<VideoResponse>builder()
                 .result(videoService.createVideo(request))
                 .build();
     }
 
+    @PutMapping("/{idVideo}")
+    public ApiResponse<VideoResponse> updateVideo(@PathVariable Integer idVideo, @RequestBody VideoUpdateRequest request) {
+        return ApiResponse.<VideoResponse>builder()
+                .result(videoService.updateVideo(idVideo, request))
+                .build();
+    }
+
     @PutMapping("view/{idVideo}")
-    ApiResponse<VideoResponse> updateViewVideo(@PathVariable Integer idVideo) {
+    public ApiResponse<VideoResponse> updateViewVideo(@PathVariable Integer idVideo) {
         return ApiResponse.<VideoResponse>builder()
                 .result(videoService.updateViewVideo(idVideo))
                 .build();
     }
 
     @PutMapping("/is_check/history/notification/video/{idChannel}/{idNotificationVideo}")
-    ApiResponse<HistoryNotificationVideoResponse> updateIsCheckHistoryNotificationVideo(@PathVariable Integer idChannel, @PathVariable Integer idNotificationVideo, @RequestBody HistoryNotificationVideoUpdateRequest request) {
+    public ApiResponse<HistoryNotificationVideoResponse> updateIsCheckHistoryNotificationVideo(@PathVariable Integer idChannel, @PathVariable Integer idNotificationVideo, @RequestBody HistoryNotificationVideoUpdateRequest request) {
         return ApiResponse.<HistoryNotificationVideoResponse>builder()
                 .result(videoService.updateIsCheckHistoryNotificationVideo(idChannel, idNotificationVideo, request))
                 .build();
     }
 
     @DeleteMapping("/{idVideo}")
-    ApiResponse<String> deleteVideo(@PathVariable Integer idVideo) throws IOException {
+    public ApiResponse<String> deleteVideo(@PathVariable Integer idVideo) throws IOException {
         videoService.deleteVideo(idVideo);
         return ApiResponse.<String>builder()
                 .result("Video has been deleted")
@@ -184,7 +188,7 @@ public class VideoController {
     }
 
     @DeleteMapping("/like/{idChannel}/{idVideo}")
-    ApiResponse<String> deleteHistoryLikeVideo(@PathVariable Integer idChannel, @PathVariable Integer idVideo) {
+    public ApiResponse<String> deleteHistoryLikeVideo(@PathVariable Integer idChannel, @PathVariable Integer idVideo) {
         videoService.deleteHistoryLikeVideo(idChannel, idVideo);
         String resultMessage = String.format("Channel %d unlike Video %d success", idChannel, idVideo);
         return ApiResponse.<String>builder()
@@ -193,7 +197,7 @@ public class VideoController {
     }
 
     @DeleteMapping("/all/watch/{idChannel}")
-    ApiResponse<String> deleteHistoryWatchVideo(@PathVariable Integer idChannel) {
+    public ApiResponse<String> deleteHistoryWatchVideo(@PathVariable Integer idChannel) {
         videoService.deleteAllHistoryWatchVideosByChannel(idChannel);
         String resultMessage = String.format("Channel %d delete all watched Video", idChannel);
         return ApiResponse.<String>builder()
