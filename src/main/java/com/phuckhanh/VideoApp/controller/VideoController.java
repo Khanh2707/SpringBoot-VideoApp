@@ -111,17 +111,17 @@ public class VideoController {
                 .build();
     }
 
-    @GetMapping("/{propertySort}/{optionSort}/pageable/{page}/{size}")
-    public ApiResponse<Page<VideoResponse>> getAllVideo(@PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
+    @GetMapping("/search/all/video/{keyword}/{propertySort}/{optionSort}/pageable/{page}/{size}/category/{idCategory}")
+    public ApiResponse<Page<VideoResponse>> searchVideosTitle(@PathVariable String keyword, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size, @PathVariable Integer idCategory) {
         return ApiResponse.<Page<VideoResponse>>builder()
-                .result(videoService.getAllVideo(propertySort, optionSort, page, size))
+                .result(videoService.searchVideosByTitle(keyword, propertySort, optionSort, page, size, idCategory))
                 .build();
     }
 
-    @GetMapping("/all/by/category/{idCategory}/{propertySort}/{optionSort}/pageable/{page}/{size}")
-    public ApiResponse<Page<VideoResponse>> getAllVideoByCategory(@PathVariable Integer idCategory, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
+    @GetMapping("/{propertySort}/{optionSort}/pageable/{page}/{size}/category/{idCategory}")
+    public ApiResponse<Page<VideoResponse>> getAllVideo(@PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size, @PathVariable Integer idCategory) {
         return ApiResponse.<Page<VideoResponse>>builder()
-                .result(videoService.getAllVideoByCategory(idCategory, propertySort, optionSort, page, size))
+                .result(videoService.getAllVideo(propertySort, optionSort, page, size, idCategory))
                 .build();
     }
 
