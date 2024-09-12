@@ -157,55 +157,66 @@ public class VideoService {
                 .map(historyLikeVideo -> videoMapper.toVideoResponse(historyLikeVideo.getVideo()));
     }
 
-    public Page<VideoResponse> searchVideosByChannelAndTitle(String nameUniqueChannel, String keyword, String propertySort, String optionSort, Integer page, Integer size) {
+    public Page<VideoResponse> searchVideosByChannelAndTitle(String nameUniqueChannel, String keyword, String propertySort, String optionSort, Integer page, Integer size, Integer idCategory) {
         Pageable pageable = PageRequest.of(page, size);
 
         if ("amountLike".equals(propertySort)) {
             if ("asc".equalsIgnoreCase(optionSort)) {
-                return videoRepository.findAllByChannelOrderByLikeCountAscAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable)
+                return videoRepository.findAllByChannelOrderByLikeCountAscAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable, idCategory)
                         .map(videoMapper::toVideoResponse);
             } else {
-                return videoRepository.findAllByChannelOrderByLikeCountDescAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable)
+                return videoRepository.findAllByChannelOrderByLikeCountDescAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable, idCategory)
                         .map(videoMapper::toVideoResponse);
             }
         } else if ("amountComment".equals(propertySort)) {
             if ("asc".equalsIgnoreCase(optionSort)) {
-                return videoRepository.findAllByChannelOrderByTotalCommentCountAscAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable)
+                return videoRepository.findAllByChannelOrderByTotalCommentCountAscAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable, idCategory)
                         .map(videoMapper::toVideoResponse);
             } else {
-                return videoRepository.findAllByChannelOrderByTotalCommentCountDescAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable)
+                return videoRepository.findAllByChannelOrderByTotalCommentCountDescAndTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable, idCategory)
+                        .map(videoMapper::toVideoResponse);
+            }
+        } else {
+            if (idCategory == 0) {
+                return videoRepository.findByNameUniqueAndVideoTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable)
+                        .map(videoMapper::toVideoResponse);
+            } else {
+                return videoRepository.findByNameUniqueAndVideoTitleContainingIgnoreCaseAndCategory_IdCategory(nameUniqueChannel, keyword, pageable, idCategory)
                         .map(videoMapper::toVideoResponse);
             }
         }
-
-        return videoRepository.findByNameUniqueAndVideoTitleContainingIgnoreCase(nameUniqueChannel, keyword, pageable)
-                .map(videoMapper::toVideoResponse);
     }
 
-    public Page<VideoResponse> getAllByChannelNameUnique(String nameUniqueChannel, String propertySort, String optionSort, Integer page, Integer size) {
+    public Page<VideoResponse> getAllByChannelNameUnique(String nameUniqueChannel, String propertySort, String optionSort, Integer page, Integer size, Integer idCategory) {
         Pageable pageable = PageRequest.of(page, size);
 
         if ("amountLike".equals(propertySort)) {
             if ("asc".equalsIgnoreCase(optionSort)) {
-                return videoRepository.findAllByChannelOrderByLikeCountAsc(nameUniqueChannel, pageable)
+                return videoRepository.findAllByChannelOrderByLikeCountAsc(nameUniqueChannel, pageable, idCategory)
                         .map(videoMapper::toVideoResponse);
             } else {
-                return videoRepository.findAllByChannelOrderByLikeCountDesc(nameUniqueChannel, pageable)
+                return videoRepository.findAllByChannelOrderByLikeCountDesc(nameUniqueChannel, pageable, idCategory)
                         .map(videoMapper::toVideoResponse);
             }
         } else if ("amountComment".equals(propertySort)) {
             if ("asc".equalsIgnoreCase(optionSort)) {
-                return videoRepository.findAllByChannelOrderByTotalCommentCountAsc(nameUniqueChannel, pageable)
+                return videoRepository.findAllByChannelOrderByTotalCommentCountAsc(nameUniqueChannel, pageable, idCategory)
                         .map(videoMapper::toVideoResponse);
             } else {
-                return videoRepository.findAllByChannelOrderByTotalCommentCountDesc(nameUniqueChannel, pageable)
+                return videoRepository.findAllByChannelOrderByTotalCommentCountDesc(nameUniqueChannel, pageable, idCategory)
                         .map(videoMapper::toVideoResponse);
             }
         } else {
             Sort sort = Sort.by(Sort.Direction.fromString(optionSort), propertySort);
             pageable = PageRequest.of(page, size, sort);
-            return videoRepository.findAllByChannel_NameUnique(nameUniqueChannel, pageable)
-                    .map(videoMapper::toVideoResponse);
+
+            if (idCategory == 0) {
+                return videoRepository.findAllByChannel_NameUnique(nameUniqueChannel, pageable)
+                        .map(videoMapper::toVideoResponse);
+            } else {
+                return videoRepository.findAllByChannel_NameUniqueAndCategory_IdCategory(nameUniqueChannel, pageable, idCategory)
+                        .map(videoMapper::toVideoResponse);
+            }
         }
     }
 

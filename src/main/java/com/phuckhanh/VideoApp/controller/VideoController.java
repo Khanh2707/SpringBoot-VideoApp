@@ -97,17 +97,17 @@ public class VideoController {
                 .build();
     }
 
-    @GetMapping("/search/all/video/channel/{nameUnique}/{keyword}/{propertySort}/{optionSort}/pageable/{page}/{size}")
-    public ApiResponse<Page<VideoResponse>> searchVideosByChannelAndTitle(@PathVariable String nameUnique, @PathVariable String keyword, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
+    @GetMapping("/search/all/video/channel/{nameUnique}/{keyword}/{propertySort}/{optionSort}/pageable/{page}/{size}/category/{idCategory}")
+    public ApiResponse<Page<VideoResponse>> searchVideosByChannelAndTitle(@PathVariable String nameUnique, @PathVariable String keyword, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size, @PathVariable Integer idCategory) {
         return ApiResponse.<Page<VideoResponse>>builder()
-                .result(videoService.searchVideosByChannelAndTitle(nameUnique, keyword, propertySort, optionSort, page, size))
+                .result(videoService.searchVideosByChannelAndTitle(nameUnique, keyword, propertySort, optionSort, page, size, idCategory))
                 .build();
     }
 
-    @GetMapping("/all/by/channel/name_unique/{nameUniqueChannel}/{propertySort}/{optionSort}/pageable/{page}/{size}")
-    ApiResponse<Page<VideoResponse>> getAllByChannelNameUnique(@PathVariable String nameUniqueChannel, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size) {
+    @GetMapping("/all/by/channel/name_unique/{nameUniqueChannel}/{propertySort}/{optionSort}/pageable/{page}/{size}/category/{idCategory}")
+    ApiResponse<Page<VideoResponse>> getAllByChannelNameUnique(@PathVariable String nameUniqueChannel, @PathVariable String propertySort, @PathVariable String optionSort, @PathVariable Integer page, @PathVariable Integer size, @PathVariable Integer idCategory) {
         return ApiResponse.<Page<VideoResponse>>builder()
-                .result(videoService.getAllByChannelNameUnique(nameUniqueChannel, propertySort, optionSort, page, size))
+                .result(videoService.getAllByChannelNameUnique(nameUniqueChannel, propertySort, optionSort, page, size, idCategory))
                 .build();
     }
 
