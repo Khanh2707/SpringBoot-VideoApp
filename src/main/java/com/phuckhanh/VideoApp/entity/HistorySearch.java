@@ -20,7 +20,7 @@ public class HistorySearch {
     String content;
     LocalDateTime dateTimeSearch;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_channel_history_search", referencedColumnName = "idChannel")
     Channel channel;
 }

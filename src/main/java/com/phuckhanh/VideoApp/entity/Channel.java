@@ -30,10 +30,10 @@ public class Channel {
     CheckHistoryNotificationVideo checkHistoryNotificationVideo;
 
     @OneToOne(mappedBy = "channel")
-    HistorySearch historySearch;
-
-    @OneToOne(mappedBy = "channel")
     BanChannel banChannel;
+
+    @OneToMany(mappedBy = "channel")
+    List<HistorySearch> historySearchs;
 
     @OneToMany(mappedBy = "channel")
     List<Video> videos;
