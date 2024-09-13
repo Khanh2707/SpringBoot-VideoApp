@@ -11,7 +11,7 @@ import org.mapstruct.MappingTarget;
 public interface AccountMapper {
     Account toAccount(AccountCreationRequest request);
 
-    AccountResponse toAccountResponse(Account account);
-
     void updateAccountPassword(@MappingTarget Account account, AccountUpdatePasswordRequest request);
+
+    AccountResponse toAccountResponse(Account account);
 }
