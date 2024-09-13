@@ -33,6 +33,9 @@ public class Video {
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
     List<CommentVideo> commentVideos;
 
+    @OneToMany(mappedBy = "video")
+    List<ReportVideo> reportVideos;
+
     @ManyToOne
     @JoinColumn(name = "id_category_video")
     Category category;

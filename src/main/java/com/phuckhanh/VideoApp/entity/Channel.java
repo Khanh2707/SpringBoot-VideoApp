@@ -49,4 +49,7 @@ public class Channel {
 
     @OneToMany(mappedBy = "channel")
     List<HistoryNotificationCommentInComment> historyNotificationCommentInComments;
+
+    @OneToMany(mappedBy = "channel")
+    List<ReportVideo> reportVideos;
 }
