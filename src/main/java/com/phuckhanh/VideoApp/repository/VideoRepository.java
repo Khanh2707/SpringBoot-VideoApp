@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VideoRepository extends JpaRepository<Video, Integer> {
+    @Query("SELECT COUNT(v) FROM Video v WHERE v.channel.idChannel = :idChannel AND v.ban = true")
+    long countVideoIsBanByChannel(Integer idChannel);
+
     @Query("SELECT COUNT(v) FROM Video v WHERE v.channel.nameUnique = :nameUniqueChannel")
     long countByChannelNameUnique(@Param("nameUniqueChannel") String nameUniqueChannel);
 

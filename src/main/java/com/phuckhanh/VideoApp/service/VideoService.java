@@ -81,6 +81,10 @@ public class VideoService {
         }
     }
 
+    public long countVideoIsBanByChannel(Integer idChannel) {
+        return videoRepository.countVideoIsBanByChannel(idChannel);
+    }
+
     public long countHistoryNotificationVideoFromTimeToTime(Integer idChannel) {
         CheckHistoryNotificationVideo checkHistoryNotificationVideo = checkHistoryNotificationVideoRepository.findByChannel_IdChannel(idChannel).orElse(null);
 

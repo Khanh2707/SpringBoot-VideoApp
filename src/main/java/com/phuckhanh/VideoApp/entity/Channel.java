@@ -32,6 +32,9 @@ public class Channel {
     @OneToOne(mappedBy = "channel")
     HistorySearch historySearch;
 
+    @OneToOne(mappedBy = "channel")
+    BanChannel banChannel;
+
     @OneToMany(mappedBy = "channel")
     List<Video> videos;
 

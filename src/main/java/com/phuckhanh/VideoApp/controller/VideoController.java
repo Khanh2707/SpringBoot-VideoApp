@@ -27,6 +27,13 @@ public class VideoController {
         videoService.downloadVideo(idVideo, response);
     }
 
+    @GetMapping("/count/ban/{idChannel}")
+    public ApiResponse<Long> countVideoIsBan(@PathVariable Integer idChannel) {
+        return ApiResponse.<Long>builder()
+                .result(videoService.countVideoIsBanByChannel(idChannel))
+                .build();
+    }
+
     @GetMapping("/count/history_notification_video/from_time_to_time/{idChannel}")
     public ApiResponse<Long> countHistoryNotificationVideoFromTimeToTime(@PathVariable Integer idChannel) {
         return ApiResponse.<Long>builder()
