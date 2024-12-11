@@ -9,10 +9,10 @@ spring:
   application:
     name: videoapp
   datasource:
-    url: jdbc:mysql://localhost:3307/videoapp
+    url: ${URL_DATABASE}
     driverClassName: com.mysql.cj.jdbc.Driver
-    username: root
-    password: root
+    username: ${USERNAME_DATABASE}
+    password: ${PASSWORD_DATABASE}
     jpa:
       properties:
         hibernate:
@@ -22,7 +22,7 @@ spring:
       show-sql: true
   mail:
     host: smtp.gmail.com
-    username: nthtpk7h7i@gmail.com
+    username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
     port: 587
     properties:
