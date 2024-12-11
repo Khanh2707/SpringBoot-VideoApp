@@ -33,7 +33,9 @@ public class BanChannelService {
     }
 
     public BanChannelResponse createBanChannel(BanChannelCreationRequest request) {
-        BanChannel banChannel = banChannelMapper.toBanChannel(request);
+        BanChannel banChannel = banChannelRepository.findByChannel_IdChannel(request.getIdChannel()).orElseThrow(() -> new AppException(ErrorCode.BAN_CHANNEL_NOT_FOUND));
+
+        banChannelMapper.toBanChannel(request);
 
         Channel channel = channelRepository.findById(request.getIdChannel()).orElseThrow(() -> new AppException(ErrorCode.CHANNEL_NOT_FOUND));
 
